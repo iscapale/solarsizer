@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SolarSizer - Prueba Local</title>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; font-family: Arial, sans-serif; background: #000; }
+        video { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        .interface { position: absolute; width: 100%; height: 100%; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .header { background: rgba(0,0,0,0.5); padding: 15px; text-align: center; }
+        .data-panel { background: rgba(0,0,0,0.6); padding: 20px; margin: 20px; border-radius: 10px; font-size: 18px; }
+        .target { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; transform: translate(-50%, -50%); border: 2px dashed #ffeb3b; border-radius: 50%; z-index: 3; }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de la Cámara -->
+    <video id="webcam" autoplay playsinline></video>
+
+    <!-- Mira de apuntado -->
+    <div class="target"></div>
+
+    <!-- Capa de Datos Físicos -->
+    <div class="interface">
+        <div class="header">
+            <h2>☀️ SolarSizer Lab</h2>
+            <p>Apunta hacia el cielo donde pasaría el sol</p>
+        </div>
+        
+        <div class="data-panel">
+            <div>🧭 <strong>Azimut (Brújula):</strong> <span id="azimuth">0</span>°</div>
+            <div>📐 <strong>Inclinación (Elevación):</strong> <span id="pitch">0</span>°</div>
+            <hr style="border-color: rgba(255,255,255,0.2);">
+            <div style="color: #ffeb3b;">💡 <em>Nota: Para captar la trayectoria exacta del sol, calcula las coordenadas astronómicas usando la latitud de tu ubicación.</em></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Activar la cámara trasera del teléfono
+        const video = document.getElementById('webcam');
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => { alert("Error al acceder a la cámara: " + err); });
+
+        // 2. Capturar los sensores físicos de orientación del teléfono
+        function handleOrientation(event) {
+            // Azimut: 0 es Norte, 90 Este, 180 Sur, 270 Oeste
+            let azimuth = event.alpha ? Math.round(event.alpha) : 0;
+            // Inclinación: 0 es teléfono plano sobre la mesa, 90 es vertical mirando al frente
+            let pitch = event.beta ? Math.round(event.beta) : 0;
+
+            document.getElementById('azimuth').innerText = azimuth;
+            document.getElementById('pitch').innerText = pitch;
+        }
+
+        // Solicitar permisos para sensores en dispositivos (Requerido en iOS/iPhone)
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            document.body.addEventListener('click', () => {
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response == 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation, true);
+                        }
+                    }).catch(console.error);
+            }, { once: true });
+        } else {
+            // Android y navegadores de escritorio estándar
+            window.addEventListener('deviceorientation', handleOrientation, true);
+        }
+    </script>
+</body>
+</html>
