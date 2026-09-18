@@ -10,27 +10,22 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   
   <style>
-    /* ═══════════════════════════════════════════
-       DISEÑO LEGIBLE Y AMIGABLE - WCAG AA
-    ═══════════════════════════════════════════ */
     :root {
       --bg-dark: #0d1117;
       --bg-card: #161b22;
       --bg-input: #21262d;
       --bg-highlight: #1c2128;
       --border: #30363d;
-      --border-accent: #ffd33d;
       --text: #f0f6fc;
       --text-soft: #c9d1d9;
       --text-dim: #8b949e;
       --yellow: #ffd33d;
-      --yellow-soft: #fff3b8;
       --green: #3fb950;
       --green-bg: #12261a;
       --blue: #58a6ff;
       --blue-bg: #0d1f33;
-      --orange: #ff8f3f;
       --red: #ff7b72;
+      --orange: #ff8f3f;
     }
     
     * { box-sizing: border-box; }
@@ -41,8 +36,7 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 17px;
       line-height: 1.65;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       -webkit-font-smoothing: antialiased;
     }
     
@@ -57,345 +51,164 @@
     }
     
     .step-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      background: var(--yellow);
-      color: #000;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
+      background: var(--yellow); color: #000;
       border-radius: 50%;
-      font-weight: 800;
-      font-size: 15px;
-      margin-right: 10px;
-      flex-shrink: 0;
+      font-weight: 800; font-size: 15px;
+      margin-right: 10px; flex-shrink: 0;
     }
     
-    h1 { 
-      color: var(--yellow); 
-      font-size: 1.6rem; 
-      font-weight: 800;
-      text-align: center;
-      margin: 0 0 6px;
-      letter-spacing: -0.3px;
-    }
+    h1 { color: var(--yellow); font-size: 1.6rem; font-weight: 800; text-align: center; margin: 0 0 6px; letter-spacing: -0.3px; }
+    .subtitle { text-align: center; color: var(--text-dim); font-size: 0.95rem; margin-bottom: 22px; }
+    h2 { color: var(--text); font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; margin: 0 0 14px; }
+    h3 { color: var(--yellow); font-size: 1.05rem; font-weight: 700; margin: 18px 0 10px; }
     
-    .subtitle {
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 0.95rem;
-      margin-bottom: 22px;
-    }
+    label { display: block; font-size: 0.95rem; color: var(--text); font-weight: 600; margin-bottom: 6px; }
     
-    h2 { 
-      color: var(--text); 
-      font-size: 1.25rem; 
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      margin: 0 0 14px;
-    }
-    
-    h3 { 
-      color: var(--yellow); 
-      font-size: 1.05rem; 
-      font-weight: 700;
-      margin: 18px 0 10px;
-    }
-    
-    label { 
-      display: block;
-      font-size: 0.95rem; 
-      color: var(--text);
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    
-    .help-text {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      margin-top: 6px;
-      line-height: 1.5;
-    }
+    .help-text { font-size: 0.85rem; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
     
     .form-control, .form-select { 
-      width: 100%;
-      background: var(--bg-input);
-      border: 2px solid var(--border);
-      color: var(--text);
-      font-size: 1rem;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-weight: 500;
+      width: 100%; background: var(--bg-input);
+      border: 2px solid var(--border); color: var(--text);
+      font-size: 1rem; padding: 12px 14px;
+      border-radius: 10px; font-weight: 500;
       transition: border-color 0.15s;
     }
     
     .form-control:focus, .form-select:focus { 
-      outline: none;
-      border-color: var(--yellow);
-      background: var(--bg-input);
-      color: var(--text);
+      outline: none; border-color: var(--yellow);
+      background: var(--bg-input); color: var(--text);
       box-shadow: 0 0 0 3px rgba(255,211,61,0.2);
     }
     
-    .input-group-cop {
-      position: relative;
-    }
-    
+    .input-group-cop { position: relative; }
     .input-group-cop::before {
-      content: '$';
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--yellow);
-      font-weight: 700;
-      font-size: 1.05rem;
-      pointer-events: none;
+      content: '$'; position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%); color: var(--yellow);
+      font-weight: 700; font-size: 1.05rem; pointer-events: none;
     }
-    
     .input-group-cop input { padding-left: 30px; }
-    
     .input-group-cop .suffix {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-dim);
-      font-size: 0.9rem;
-      pointer-events: none;
-      font-weight: 600;
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%); color: var(--text-dim);
+      font-size: 0.9rem; pointer-events: none; font-weight: 600;
     }
     
     .btn-primary {
-      width: 100%;
-      background: var(--yellow);
-      border: none;
-      color: #000;
-      font-weight: 800;
-      font-size: 1.1rem;
-      padding: 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.15s;
+      width: 100%; background: var(--yellow); border: none; color: #000;
+      font-weight: 800; font-size: 1.1rem; padding: 16px;
+      border-radius: 12px; cursor: pointer; transition: all 0.15s;
       letter-spacing: 0.2px;
     }
+    .btn-primary:hover { background: #ffdd55; transform: translateY(-1px); }
     
-    .btn-primary:hover { 
-      background: #ffdd55; 
-      transform: translateY(-1px);
+    .btn-secondary {
+      background: transparent; color: var(--text-soft);
+      border: 1px solid var(--border); font-size: 0.9rem;
+      padding: 8px 14px; border-radius: 8px; cursor: pointer;
+      font-weight: 600; transition: all 0.15s;
     }
+    .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow); }
     
-    .btn-primary:active { transform: translateY(0); }
-    
-    #map { 
-      height: 260px; 
-      border-radius: 12px; 
-      margin-top: 14px; 
-      border: 2px solid var(--border);
-      overflow: hidden;
-    }
+    #map { height: 260px; border-radius: 12px; margin-top: 14px; border: 2px solid var(--border); overflow: hidden; }
     
     .gps-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background: var(--bg-highlight);
-      border-radius: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-      gap: 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; background: var(--bg-highlight);
+      border-radius: 10px; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
     }
-    
     .gps-row .label { color: var(--text-dim); font-size: 0.9rem; }
     .gps-row .value { color: var(--yellow); font-weight: 700; }
     
-    /* Tarjetas de resultado */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 16px 0;
-    }
-    
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
     .stat {
-      background: var(--bg-highlight);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 12px;
-      text-align: center;
+      background: var(--bg-highlight); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 12px; text-align: center;
     }
-    
     .stat-icon { font-size: 1.7rem; margin-bottom: 4px; display: block; }
-    .stat-value { 
-      font-size: 1.5rem; 
-      font-weight: 800; 
-      color: var(--yellow); 
-      display: block;
-      line-height: 1.2;
-      margin: 4px 0;
-    }
-    .stat-label { 
-      font-size: 0.78rem; 
-      color: var(--text-soft); 
-      line-height: 1.4;
-    }
-    
+    .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--yellow); display: block; line-height: 1.2; margin: 4px 0; }
+    .stat-label { font-size: 0.78rem; color: var(--text-soft); line-height: 1.4; }
     .stat.green .stat-value { color: var(--green); }
     .stat.blue .stat-value { color: var(--blue); }
     
-    /* Resultado con explicación simple */
     .explain-box {
-      background: var(--bg-highlight);
-      border-left: 4px solid var(--yellow);
-      border-radius: 8px;
-      padding: 14px 16px;
-      margin: 12px 0;
-      font-size: 0.95rem;
-      color: var(--text-soft);
+      background: var(--bg-highlight); border-left: 4px solid var(--yellow);
+      border-radius: 8px; padding: 14px 16px; margin: 12px 0;
+      font-size: 0.95rem; color: var(--text-soft);
     }
-    
     .explain-box.blue { border-left-color: var(--blue); background: var(--blue-bg); }
     .explain-box.green { border-left-color: var(--green); background: var(--green-bg); }
-    
+    .explain-box.warn { border-left-color: var(--orange); background: #2b1d10; }
     .explain-box strong { color: var(--text); }
     .explain-box .emoji { font-size: 1.2rem; margin-right: 6px; }
     
-    /* Filas de resultado */
     .result-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      gap: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid var(--border); gap: 12px;
     }
-    
     .result-row:last-child { border-bottom: none; }
-    
-    .result-row .label {
-      color: var(--text-soft);
-      font-size: 0.95rem;
-      flex: 1;
-    }
-    
-    .result-row .value {
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: var(--text);
-      text-align: right;
-      white-space: nowrap;
-    }
-    
+    .result-row .label { color: var(--text-soft); font-size: 0.95rem; flex: 1; }
+    .result-row .value { font-weight: 800; font-size: 1.1rem; color: var(--text); text-align: right; white-space: nowrap; }
     .value.big { font-size: 1.35rem; color: var(--yellow); }
     .value.green { color: var(--green); }
-    .value.red { color: var(--red); }
-    .value.blue { color: var(--blue); }
     
-    /* Caja destacada grande */
     .hero-result {
       background: linear-gradient(135deg, #1c2128 0%, #21262d 100%);
-      border: 2px solid var(--yellow);
-      border-radius: 14px;
-      padding: 20px;
-      text-align: center;
-      margin: 16px 0;
+      border: 2px solid var(--yellow); border-radius: 14px;
+      padding: 20px; text-align: center; margin: 16px 0;
     }
-    
     .hero-result .label {
-      color: var(--text-dim);
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
+      color: var(--text-dim); font-size: 0.9rem;
+      text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
     }
-    
     .hero-result .value {
-      color: var(--yellow);
-      font-size: 2.2rem;
-      font-weight: 900;
-      margin: 6px 0;
-      line-height: 1.1;
+      color: var(--yellow); font-size: 2.2rem;
+      font-weight: 900; margin: 6px 0; line-height: 1.1;
     }
+    .hero-result .sub { color: var(--text-soft); font-size: 0.9rem; }
     
-    .hero-result .sub {
-      color: var(--text-soft);
-      font-size: 0.9rem;
-    }
-    
-    /* Progress bar */
-    .progress-wrap {
-      margin: 14px 0;
-    }
-    
-    .progress-bar-custom {
-      height: 12px;
-      background: var(--bg-input);
-      border-radius: 6px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-    
+    .progress-wrap { margin: 14px 0; }
+    .progress-bar-custom { height: 12px; background: var(--bg-input); border-radius: 6px; overflow: hidden; margin-top: 8px; }
     .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ff8f3f, var(--yellow));
-      border-radius: 6px;
-      transition: width 0.6s ease-out;
+      height: 100%; background: linear-gradient(90deg, #ff8f3f, var(--yellow));
+      border-radius: 6px; transition: width 0.6s ease-out;
     }
     
-    /* Badges */
     .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 700;
+      display: inline-block; padding: 4px 10px; border-radius: 6px;
+      font-size: 0.8rem; font-weight: 700;
     }
-    
     .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #1e4d2e; }
     .badge-yellow { background: #2a2510; color: var(--yellow); border: 1px solid #5a4f1c; }
     .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1c4d80; }
     .badge-red { background: #2d1416; color: var(--red); border: 1px solid #5c2929; }
     
-    /* Loading */
     .loading {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid var(--border);
-      border-top-color: var(--yellow);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid var(--border); border-top-color: var(--yellow);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      vertical-align: middle; margin-right: 6px;
     }
-    
     @keyframes spin { to { transform: rotate(360deg); } }
     
-    /* Separador */
-    .sep {
-      height: 1px;
-      background: var(--border);
-      margin: 18px 0;
-    }
-    
-    /* Section con paso */
     .step-section { display: none; }
     .step-section.visible { display: block; animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+    .footnote {
+      font-size: 0.85rem; color: var(--text-dim);
+      line-height: 1.55; text-align: center; padding: 8px;
     }
     
-    /* Nota final */
-    .footnote {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.55;
-      text-align: center;
-      padding: 8px;
+    .manual-coords {
+      display: none; gap: 10px; margin-top: 12px; flex-wrap: wrap;
+    }
+    .manual-coords.show { display: flex; }
+    .manual-coords input { flex: 1; min-width: 120px; }
+    
+    .action-row {
+      display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
     }
   </style>
 </head>
@@ -403,7 +216,6 @@
 
 <div class="container">
 
-  <!-- ═══════ HEADER ═══════ -->
   <h1>☀️ RayScan Solar</h1>
   <p class="subtitle">Descubre cuánta energía puede captar tu techo y cuánto puedes ahorrar</p>
 
@@ -423,15 +235,55 @@
       <span class="loading"></span> Consultando datos de la NASA...
     </div>
     
+    <!-- Selector de ciudad (solo aparece si el GPS falla) -->
+    <div id="city-fallback" style="display: none;">
+      <label for="city-select" style="margin-top: 12px;">🏙️ Selecciona tu ciudad:</label>
+      <select id="city-select" class="form-select" onchange="seleccionarCiudad()">
+        <option value="">— Elige una ciudad —</option>
+        <option value="4.7110,-74.0721">Bogotá</option>
+        <option value="6.2442,-75.5812">Medellín</option>
+        <option value="3.4516,-76.5320">Cali</option>
+        <option value="10.9685,-74.7813">Barranquilla</option>
+        <option value="10.3910,-75.4794">Cartagena</option>
+        <option value="8.7479,-75.8814">Montería</option>
+        <option value="7.1193,-73.1227">Bucaramanga</option>
+        <option value="4.8133,-75.6961">Pereira</option>
+        <option value="11.2404,-74.1990">Santa Marta</option>
+        <option value="7.8939,-72.5078">Cúcuta</option>
+        <option value="4.1420,-73.6266">Villavicencio</option>
+        <option value="1.2136,-77.2811">Pasto</option>
+        <option value="5.0689,-75.5174">Manizales</option>
+        <option value="2.9345,-75.2809">Neiva</option>
+        <option value="4.5339,-75.6811">Armenia</option>
+        <option value="9.3047,-75.3978">Sincelejo</option>
+        <option value="10.4631,-73.2532">Valledupar</option>
+        <option value="11.5444,-72.9072">Riohacha</option>
+        <option value="5.6947,-76.6611">Quibdó</option>
+        <option value="5.5353,-73.3678">Tunja</option>
+        <option value="2.4448,-76.6147">Popayán</option>
+        <option value="-4.2153,-69.9406">Leticia</option>
+      </select>
+    </div>
+    
+    <!-- Botones auxiliares -->
+    <div class="action-row">
+      <button type="button" class="btn-secondary" onclick="reintentarGPS()">🔄 Reintentar GPS</button>
+      <button type="button" class="btn-secondary" onclick="toggleManual()">✏️ Coordenadas manuales</button>
+    </div>
+    
+    <div class="manual-coords" id="manual-coords">
+      <input type="number" id="lat-manual" class="form-control" placeholder="Latitud (ej: 8.75)" step="0.0001">
+      <input type="number" id="lon-manual" class="form-control" placeholder="Longitud (ej: -75.88)" step="0.0001">
+      <button type="button" class="btn-secondary" onclick="usarManual()">Aplicar</button>
+    </div>
+    
     <div id="map"></div>
   </div>
 
   <!-- ═══════ PASO 2: TECHO ═══════ -->
   <div class="card">
     <h2><span class="step-badge">2</span> ¿Cómo es tu techo?</h2>
-    <p style="color: var(--text-soft); margin-bottom: 16px;">
-      Estos datos nos dicen cuánta energía puede captar tu techo.
-    </p>
+    <p style="color: var(--text-soft); margin-bottom: 16px;">Estos datos nos dicen cuánta energía puede captar tu techo.</p>
     
     <div style="margin-bottom: 16px;">
       <label for="roof-area">📐 Área disponible en el techo (m²)</label>
@@ -464,7 +316,7 @@
         <option value="-90">Oeste — recibe sol en la tarde</option>
         <option value="180">Sur — recibe menos sol directo</option>
       </select>
-      <div class="help-text">En Colombia (hemisferio norte), los techos que miran al <strong>norte</strong> reciben más sol durante el año. Si no sabes, deja "Norte".</div>
+      <div class="help-text">En Colombia (hemisferio norte), los techos que miran al <strong>norte</strong> reciben más sol durante el año.</div>
     </div>
     
     <div style="margin-bottom: 16px;">
@@ -482,9 +334,7 @@
   <!-- ═══════ PASO 3: CONSUMO ═══════ -->
   <div class="card">
     <h2><span class="step-badge">3</span> ¿Cuánto pagas de luz?</h2>
-    <p style="color: var(--text-soft); margin-bottom: 16px;">
-      Con tu factura calculamos cuánta energía consumes y cuánto necesitarías producir con paneles.
-    </p>
+    <p style="color: var(--text-soft); margin-bottom: 16px;">Con tu factura calculamos cuánta energía consumes y cuánto necesitarías producir con paneles.</p>
     
     <div style="margin-bottom: 16px;">
       <label for="bill-amount">💵 Valor de tu factura de luz mensual</label>
@@ -501,20 +351,16 @@
         <input type="number" id="kwh-price" class="form-control" value="900" min="300" step="50">
         <span class="suffix">COP</span>
       </div>
-      <div class="help-text">Aparece en tu factura como "costo unitario". En Colombia suele estar entre $800 y $1.000 COP. Si no lo sabes, déjalo en 900.</div>
+      <div class="help-text">Aparece en tu factura como "costo unitario". En Colombia suele estar entre $800 y $1.000 COP.</div>
     </div>
   </div>
 
-  <!-- ═══════ BOTÓN CALCULAR ═══════ -->
-  <button class="btn-primary" onclick="calcularTodo()">
-    ✨ Calcular mi proyecto solar
-  </button>
+  <button class="btn-primary" onclick="calcularTodo()">✨ Calcular mi proyecto solar</button>
 
   <!-- ═══════ PASO 4: POTENCIAL DEL TECHO ═══════ -->
   <div class="card step-section" id="section-energy" style="margin-top: 18px;">
     <h2><span class="step-badge">4</span> Lo que tu techo puede captar</h2>
-    
-    <div class="explain-box blue" id="sun-explain">
+    <div class="explain-box blue">
       <span class="emoji">☀️</span> En tu zona, el sol entrega cierta cantidad de energía por cada metro cuadrado. Con eso y el tamaño de tu techo, calculamos cuánta energía solar llega a tu techo.
     </div>
     
@@ -563,7 +409,6 @@
   <!-- ═══════ PASO 5: PANELES ═══════ -->
   <div class="card step-section" id="section-panels">
     <h2><span class="step-badge">5</span> Cuántos paneles necesitas</h2>
-    
     <div class="explain-box">
       <span class="emoji">🔋</span> Para cubrir tu consumo mensual con energía solar, necesitas una cierta cantidad de paneles. Calculamos cuántos caben y cuántos necesitas.
     </div>
@@ -587,15 +432,12 @@
       <span class="value" id="res-fits">—</span>
     </div>
     
-    <div class="explain-box" id="panels-explain">
-      <!-- Se llena dinámicamente -->
-    </div>
+    <div class="explain-box" id="panels-explain"></div>
   </div>
 
   <!-- ═══════ PASO 6: DINERO ═══════ -->
   <div class="card step-section" id="section-money">
     <h2><span class="step-badge">6</span> Cuánto cuesta y cuánto ahorras</h2>
-    
     <div class="explain-box">
       <span class="emoji">💰</span> Ahora te mostramos la inversión inicial y el ahorro que tendrías. Todos los valores están en pesos colombianos (COP).
     </div>
@@ -634,8 +476,6 @@
       <span class="emoji">🎯</span> <strong>En palabras simples:</strong> si instalas paneles hoy, en unos años habrás recuperado lo invertido. Después, la energía que produzcas será prácticamente gratis durante los siguientes 20+ años.
     </div>
     
-    <div class="sep"></div>
-    
     <h3>🌍 Beneficio ambiental</h3>
     <div class="result-row">
       <span class="label">CO₂ que dejarás de emitir al año</span>
@@ -647,12 +487,11 @@
     </div>
   </div>
 
-  <!-- ═══════ NOTA ═══════ -->
   <div class="card step-section" id="section-note">
     <p class="footnote">
       ℹ️ <strong>Sobre estos cálculos:</strong> Usamos datos satelitales de la NASA sobre radiación solar, 
       precios promedios del mercado colombiano 2025-2026 y estándares internacionales de ingeniería fotovoltaica. 
-      Los resultados son estimaciones: una cotización con un instalador certificado RETIE te dará el valor exacto para tu caso.
+      Los resultados son estimaciones: una cotización con un instalador certificado RETIE te dará el valor exacto.
     </p>
   </div>
 
@@ -662,54 +501,56 @@
   // ═══════════════════════════════════════════
   // ESTADO GLOBAL
   // ═══════════════════════════════════════════
-  let usuarioLat = 8.75;    // Montería por defecto
-  let usuarioLon = -75.88;
+  let usuarioLat = 8.7479;
+  let usuarioLon = -75.8814;
   let ghiActual = null;
   let map = null;
   let marker = null;
+  let gpsObtenido = false;
 
   // ═══════════════════════════════════════════
-  // CONSTANTES TÉCNICAS Y DE MERCADO
+  // CONSTANTES
   // ═══════════════════════════════════════════
-  const POTENCIA_PANEL_KWP = 0.55;           // Panel de 550 W (estándar 2025)
-  const AREA_PANEL_M2 = 2.6;                  // m² que ocupa un panel de 550 W
-  const EFICIENCIA_PANEL = 0.21;              // 21% (convierte luz solar en electricidad)
-  const COSTO_POR_KWP_COP = 4.500.000;        // Promedio instalado en Colombia
-  const COBERTURA_OBJETIVO = 0.85;            // Cubrir 85% del consumo con solar
-  const FACTOR_CO2_KG_KWH = 0.164;            // kg CO₂ por kWh en Colombia
-  const CO2_POR_ARBOL_ANUAL = 21;             // kg CO₂ que absorbe un árbol al año
+  const POTENCIA_PANEL_KWP = 0.55;
+  const AREA_PANEL_M2 = 2.6;
+  const EFICIENCIA_PANEL = 0.21;
+  const COSTO_POR_KWP_COP = 4500000;
+  const COBERTURA_OBJETIVO = 0.85;
+  const FACTOR_CO2_KG_KWH = 0.164;
+  const CO2_POR_ARBOL_ANUAL = 21;
 
   // ═══════════════════════════════════════════
-  // 1. MAPA SATELITAL
+  // MAPA SATELITAL
   // ═══════════════════════════════════════════
   function initMap(lat, lon) {
     if (map) {
       map.setView([lat, lon], 16);
-      if (marker) marker.setLatLng([lat, lon]);
+      if (marker) {
+        marker.setLatLng([lat, lon])
+          .setPopupContent(`<b>📍 Tu ubicación</b><br>${lat.toFixed(4)}, ${lon.toFixed(4)}`);
+      }
       return;
     }
-    map = L.map('map', { zoomControl: true, attributionControl: false }).setView([lat, lon], 16);
+    map = L.map('map', { attributionControl: false }).setView([lat, lon], 16);
     L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       { maxZoom: 19 }
     ).addTo(map);
     marker = L.marker([lat, lon]).addTo(map)
-      .bindPopup(`<b>📍 Tu techo</b><br>${lat.toFixed(4)}, ${lon.toFixed(4)}`)
+      .bindPopup(`<b>📍 Tu ubicación</b><br>${lat.toFixed(4)}, ${lon.toFixed(4)}`)
       .openPopup();
   }
 
   // ═══════════════════════════════════════════
-  // 2. NASA POWER API
+  // NASA POWER API
   // ═══════════════════════════════════════════
   async function obtenerDatosNASA(lat, lon) {
     const url = `https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude=${lon}&latitude=${lat}&format=JSON`;
-    
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error('NASA no disponible');
       const data = await response.json();
       const props = data.properties.parameter.ALLSKY_SFC_SW_DWN;
-      
       let suma = 0, count = 0;
       for (let mes = 1; mes <= 12; mes++) {
         const v = props[String(mes).padStart(2, '0')];
@@ -717,18 +558,16 @@
       }
       ghiActual = suma / count;
       actualizarInfoClima(ghiActual, false);
-      return ghiActual;
     } catch (e) {
+      console.warn('NASA POWER falló, usando estimación:', e);
       ghiActual = estimarGHIPorLatitud(lat);
       actualizarInfoClima(ghiActual, true);
-      return ghiActual;
     }
   }
 
   function actualizarInfoClima(ghi, esEstimado) {
     const zona = ghi > 4.8 ? 'excelente' : ghi > 4.0 ? 'muy buena' : ghi > 3.2 ? 'moderada' : 'baja';
     const colorBadge = ghi > 4.5 ? 'badge-green' : ghi > 3.5 ? 'badge-yellow' : 'badge-red';
-    
     document.getElementById('climate-info').innerHTML = `
       <span class="emoji">🛰️</span> ${esEstimado ? '<em>Estimación por ubicación:</em>' : '<strong>Datos de la NASA obtenidos:</strong>'}
       En tu zona, el sol entrega <strong>${ghi.toFixed(2)} kWh por m² al día</strong> — potencial solar <span class="badge ${colorBadge}">${zona.toUpperCase()}</span>.
@@ -751,65 +590,146 @@
   }
 
   // ═══════════════════════════════════════════
-  // 3. GEOLOCALIZACIÓN
+  // GPS — LLAMADA DIRECTA (como en versiones anteriores)
   // ═══════════════════════════════════════════
-  if (navigator.geolocation) {
+  function detectarGPS() {
+    const gpsDisplay = document.getElementById('gps-display');
+    const cityFallback = document.getElementById('city-fallback');
+    const climateInfo = document.getElementById('climate-info');
+
+    // 1. Verificar soporte del navegador
+    if (!navigator.geolocation) {
+      gpsDisplay.innerText = 'GPS no soportado por este navegador';
+      cityFallback.style.display = 'block';
+      climateInfo.innerHTML = `<span class="emoji">⚠️</span> Tu navegador no soporta GPS. Selecciona tu ciudad abajo.`;
+      climateInfo.className = 'explain-box warn';
+      usarCiudadPorDefecto();
+      return;
+    }
+
+    gpsDisplay.innerHTML = '<span class="loading"></span> Detectando ubicación...';
+    climateInfo.innerHTML = '<span class="loading"></span> Consultando datos de la NASA...';
+
+    // 2. Pedir ubicación directamente (SIN verificaciones previas)
     navigator.geolocation.getCurrentPosition(
+      // ─── ÉXITO ───
       async position => {
         usuarioLat = position.coords.latitude;
         usuarioLon = position.coords.longitude;
-        document.getElementById('gps-display').innerText = `${usuarioLat.toFixed(4)}, ${usuarioLon.toFixed(4)}`;
+        gpsObtenido = true;
+        gpsDisplay.innerText = `${usuarioLat.toFixed(4)}, ${usuarioLon.toFixed(4)}`;
+        cityFallback.style.display = 'none';
         initMap(usuarioLat, usuarioLon);
         await obtenerDatosNASA(usuarioLat, usuarioLon);
       },
+      // ─── ERROR ───
       err => {
-        document.getElementById('gps-display').innerText = 'Ubicación no permitida (usando Montería)';
-        initMap(usuarioLat, usuarioLon);
-        obtenerDatosNASA(usuarioLat, usuarioLon);
+        let mensaje = '';
+        switch (err.code) {
+          case 1: mensaje = 'Permiso de ubicación denegado'; break;
+          case 2: mensaje = 'Ubicación no disponible'; break;
+          case 3: mensaje = 'Tiempo de espera agotado'; break;
+          default: mensaje = 'Error desconocido';
+        }
+        gpsDisplay.innerHTML = `❌ ${mensaje}`;
+        cityFallback.style.display = 'block';
+        climateInfo.innerHTML = `
+          <span class="emoji">⚠️</span> <strong>No se pudo obtener tu GPS:</strong> ${mensaje.toLowerCase()}.<br>
+          👉 <strong>Selecciona tu ciudad en el menú de abajo</strong> y los cálculos funcionarán igual.
+        `;
+        climateInfo.className = 'explain-box warn';
+        usarCiudadPorDefecto();
+      },
+      // ─── OPCIONES ───
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 60000
       }
     );
-  } else {
-    initMap(usuarioLat, usuarioLon);
-    obtenerDatosNASA(usuarioLat, usuarioLon);
   }
 
   // ═══════════════════════════════════════════
-  // 4. FORMATEO DE MONEDA COP
+  // RESPALDOS: CIUDAD, COORDENADAS MANUALES
+  // ═══════════════════════════════════════════
+  function usarCiudadPorDefecto() {
+    const lat = 8.7479, lon = -75.8814;
+    usuarioLat = lat;
+    usuarioLon = lon;
+    initMap(lat, lon);
+    obtenerDatosNASA(lat, lon);
+  }
+
+  function seleccionarCiudad() {
+    const val = document.getElementById('city-select').value;
+    if (!val) return;
+    const [lat, lon] = val.split(',').map(Number);
+    usuarioLat = lat;
+    usuarioLon = lon;
+    gpsObtenido = true;
+    document.getElementById('gps-display').innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    initMap(lat, lon);
+    obtenerDatosNASA(lat, lon);
+  }
+
+  function reintentarGPS() {
+    document.getElementById('city-fallback').style.display = 'none';
+    detectarGPS();
+  }
+
+  function toggleManual() {
+    document.getElementById('manual-coords').classList.toggle('show');
+  }
+
+  function usarManual() {
+    const lat = parseFloat(document.getElementById('lat-manual').value);
+    const lon = parseFloat(document.getElementById('lon-manual').value);
+    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      alert('Por favor ingresa coordenadas válidas.\nLatitud entre -90 y 90.\nLongitud entre -180 y 180.');
+      return;
+    }
+    usuarioLat = lat;
+    usuarioLon = lon;
+    gpsObtenido = true;
+    document.getElementById('gps-display').innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    initMap(lat, lon);
+    obtenerDatosNASA(lat, lon);
+  }
+
+  // ═══════════════════════════════════════════
+  // INICIO: intentar GPS al cargar
+  // ═══════════════════════════════════════════
+  detectarGPS();
+
+  // ═══════════════════════════════════════════
+  // FORMATEO COP
   // ═══════════════════════════════════════════
   function cop(valor) {
-    if (valor >= 1.000.000) {
-      return '$' + (valor / 1.000.000).toFixed(1).replace('.', ',') + ' millones';
+    if (Math.abs(valor) >= 1000000) {
+      return '$' + (valor / 1000000).toFixed(1).replace('.', ',') + ' millones';
     }
     return '$' + Math.round(valor).toLocaleString('es-CO');
   }
-  
-  function copFull(valor) {
-    return '$' + Math.round(valor).toLocaleString('es-CO') + ' COP';
-  }
 
   // ═══════════════════════════════════════════
-  // 5. CÁLCULO PRINCIPAL
+  // CÁLCULO PRINCIPAL
   // ═══════════════════════════════════════════
   function calcularTodo() {
     if (!ghiActual) {
-      alert('Espera unos segundos, aún estamos consultando los datos de la NASA.');
+      alert('Espera unos segundos, aún estamos consultando los datos de la NASA. Si ya pasó mucho tiempo, selecciona tu ciudad manualmente.');
       return;
     }
     
-    // ─── Datos del techo ───
     const areaTecho = parseFloat(document.getElementById('roof-area').value) || 30;
     const inclinacion = parseInt(document.getElementById('roof-tilt').value);
     const orientacion = parseInt(document.getElementById('roof-orientation').value);
     const factorShading = parseFloat(document.getElementById('shading-factor').value);
     
-    // ─── Datos del consumo ───
     const facturaCOP = parseFloat(document.getElementById('bill-amount').value) || 250000;
     const precioKwhCOP = parseFloat(document.getElementById('kwh-price').value) || 900;
     const consumoMensualKwh = facturaCOP / precioKwhCOP;
     
-    // ═══════════════════════════════════════════
-    // FACTOR GEOMÉTRICO DEL TECHO
-    // ═══════════════════════════════════════════
+    // Factor geométrico
     const latAbs = Math.abs(usuarioLat);
     const inclinacionOptima = Math.min(latAbs, 15);
     const desvInc = Math.abs(inclinacion - inclinacionOptima);
@@ -818,36 +738,23 @@
     const factorOr = Math.max(0.65, 1 - (desvOr * 0.003));
     const factorGeom = factorInc * factorOr;
     
-    // ═══════════════════════════════════════════
-    // ENERGÍA CAPTABLE EN EL TECHO
-    // ═══════════════════════════════════════════
+    // Energía captable
     const energiaDiaria = ghiActual * areaTecho * factorGeom * factorShading;
     const energiaMensual = energiaDiaria * 30.44;
     const energiaAnual = energiaDiaria * 365.25;
     const eficienciaTecho = factorGeom * factorShading * 100;
     
-    // ═══════════════════════════════════════════
-    // DIMENSIONAMIENTO DEL SISTEMA
-    // ═══════════════════════════════════════════
-    // Energía eléctrica que necesitamos generar al mes
+    // Dimensionamiento
     const energiaObjetivoMensual = consumoMensualKwh * COBERTURA_OBJETIVO;
-    
-    // Energía que produce 1 kWp instalado al mes en esta zona
-    // = GHI × 30.44 × factorGeom × factorShading × eficienciaPanel
     const produccionKwhPorKwpMes = ghiActual * 30.44 * factorGeom * factorShading * EFICIENCIA_PANEL;
-    
-    // Potencia necesaria del sistema en kWp
     const potenciaSistemaKwp = energiaObjetivoMensual / produccionKwhPorKwpMes;
     
-    // Número de paneles de 550 W
     let numPaneles = Math.ceil(potenciaSistemaKwp / POTENCIA_PANEL_KWP);
     if (numPaneles < 1) numPaneles = 1;
     
-    const potenciaRealKwp = numPaneles * POTENCIA_PANEL_KWP;
     const areaNecesaria = numPaneles * AREA_PANEL_M2;
     const cabeEnTecho = areaNecesaria <= areaTecho;
     
-    // Si no caben, ajustar
     let numPanelesFinal = numPaneles;
     if (!cabeEnTecho) {
       numPanelesFinal = Math.floor(areaTecho / AREA_PANEL_M2);
@@ -856,32 +763,20 @@
     const potenciaFinalKwp = numPanelesFinal * POTENCIA_PANEL_KWP;
     const areaFinalNecesaria = numPanelesFinal * AREA_PANEL_M2;
     
-    // ═══════════════════════════════════════════
-    // CÁLCULOS FINANCIEROS
-    // ═══════════════════════════════════════════
+    // Financieros
     const inversionCOP = potenciaFinalKwp * COSTO_POR_KWP_COP;
-    
-    // Producción mensual real del sistema
     const produccionMensualKwh = potenciaFinalKwp * produccionKwhPorKwpMes;
-    
-    // Ahorro mensual (limitado al consumo real, no puedes ahorrar más de lo que consumes)
     const kwhAhorradosMes = Math.min(produccionMensualKwh, consumoMensualKwh);
     const ahorroMensualCOP = kwhAhorradosMes * precioKwhCOP;
     const ahorroAnualCOP = ahorroMensualCOP * 12;
-    
     const roiAnios = ahorroAnualCOP > 0 ? inversionCOP / ahorroAnualCOP : 0;
     const ahorro25Anios = (ahorroAnualCOP * 25) - inversionCOP;
     
-    // Beneficio ambiental
     const kwhAnualesGenerados = kwhAhorradosMes * 12;
     const co2EvitadoKg = kwhAnualesGenerados * FACTOR_CO2_KG_KWH;
     const arbolesEquivalentes = Math.round(co2EvitadoKg / CO2_POR_ARBOL_ANUAL);
     
-    // ═══════════════════════════════════════════
-    // MOSTRAR RESULTADOS
-    // ═══════════════════════════════════════════
-    
-    // Sección 4: Potencial del techo
+    // Mostrar resultados
     document.getElementById('res-ghi').innerText = ghiActual.toFixed(2);
     document.getElementById('res-daily').innerText = energiaDiaria.toFixed(1);
     document.getElementById('res-monthly').innerText = energiaMensual.toFixed(0);
@@ -889,7 +784,6 @@
     document.getElementById('res-efficiency-badge').innerText = eficienciaTecho.toFixed(0) + '%';
     document.getElementById('efficiency-bar').style.width = eficienciaTecho + '%';
     
-    // Sección 5: Paneles
     document.getElementById('res-panels').innerText = numPanelesFinal;
     document.getElementById('res-panels-sub').innerText = numPanelesFinal === 1 ? 'panel de 550 W' : 'paneles de 550 W cada uno';
     document.getElementById('res-power').innerText = potenciaFinalKwp.toFixed(2) + ' kWp';
@@ -902,7 +796,6 @@
       fitsEl.innerHTML = '<span class="badge badge-yellow">⚠ Solo caben ' + numPanelesFinal + '</span>';
     }
     
-    // Explicación de paneles
     const panelExplain = document.getElementById('panels-explain');
     if (cabeEnTecho) {
       panelExplain.innerHTML = `
@@ -913,12 +806,10 @@
     } else {
       panelExplain.innerHTML = `
         <span class="emoji">⚠️</span> Tu consumo requiere <strong>${numPaneles}</strong> paneles, pero en tu techo solo caben <strong>${numPanelesFinal}</strong>. 
-        Con estos paneles cubrirás aproximadamente el <strong>${((produccionMensualKwh / consumoMensualKwh) * 100).toFixed(0)}%</strong> de tu consumo. 
-        El resto lo seguirás comprando a la red eléctrica.
+        Con estos paneles cubrirás aproximadamente el <strong>${((produccionMensualKwh / consumoMensualKwh) * 100).toFixed(0)}%</strong> de tu consumo.
       `;
     }
     
-    // Sección 6: Dinero
     document.getElementById('res-investment').innerText = cop(inversionCOP);
     document.getElementById('res-monthly-savings').innerText = cop(ahorroMensualCOP);
     document.getElementById('res-annual-savings').innerText = cop(ahorroAnualCOP);
@@ -932,7 +823,6 @@
       document.getElementById(id).classList.add('visible');
     });
     
-    // Scroll a la primera sección de resultados
     setTimeout(() => {
       document.getElementById('section-energy').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 200);
