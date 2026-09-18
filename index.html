@@ -1,148 +1,290 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RayScan - Calculador de Inversión Solar</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #121212; color: #e0e0e0; }
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 20px; border: 1px solid #2d2d2d; }
-        h1, h2 { color: #ffeb3b; margin-top: 0; text-align: center; }
-        label { display: block; margin: 15px 0 5px; font-weight: bold; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #3d3d3d; background: #2a2a2a; color: #fff; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 14px; background: #ffeb3b; color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; transition: background 0.3s; }
-        button:hover { background: #fbc02d; }
-        .result-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d2d2d; font-size: 15px; }
-        .highlight { color: #ffeb3b; font-weight: bold; font-size: 18px; }
-        .badge { background: #2e7d32; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RayScan - Calculador Solar Colombia</title>
+  
+  <!-- Leaflet para vista satelital -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Bootstrap para diseño responsivo -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    body { background-color: #121212; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; }
+    .card { background: #1e1e1e; border: 1px solid #2d2d2d; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    h1, h2 { color: #ffeb3b; }
+    .highlight { color: #ffeb3b; font-weight: bold; font-size: 1.2rem; }
+    .result-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d2d2d; }
+    .badge-cop { background: #2e7d32; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+    #map { height: 260px; border-radius: 10px; margin-top: 10px; }
+    .table-dark-custom { color: #e0e0e0; }
+    .table-dark-custom th { background: #2a2a2a; color: #ffeb3b; }
+    .table-dark-custom td { background: #1e1e1e; border-color: #2d2d2d; }
+    .rec-card { background: #1a2a1a; border: 1px solid #2e7d32; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+    .rec-card h6 { color: #4caf50; margin-bottom: 4px; }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="card">
-            <h1>☀️ RayScan Engine</h1>
-            <p style="text-align: center; color: #aaa; font-size: 13px;">Auditoría Solar instantánea por GPS y Registro Climático</p>
-            
-            <div>📍 <strong>Ubicación GPS:</strong> <span id="gps-display" style="color: #ffeb3b;">Detectando...</span></div>
-            <div id="climate-info" style="font-size: 12px; color: #888; margin-top: 4px;">Cargando historial de radiación de la zona...</div>
-        </div>
-
-        <div class="card">
-            <h2>📊 Datos de Consumo</h2>
-            
-            <label for="bill-amount">Costo de tu última factura eléctrica (USD):</label>
-            <input type="number" id="bill-amount" value="80" min="1">
-
-            <label for="kwh-price">Precio del kWh en tu región (USD):</label>
-            <input type="number" id="kwh-price" value="0.22" step="0.01">
-
-            <button onclick="calcularSimulacionSolar()">Calcular Proyecto Optimo</button>
-        </div>
-
-        <div class="card" id="results-card" style="display: none;">
-            <h2>📈 Viabilidad Financiera</h2>
-            
-            <div class="result-row">
-                <span>Paneles Solares Requeridos:</span>
-                <span id="res-panels" class="highlight">0</span>
-            </div>
-            <div class="result-row">
-                <span>Potencia Total del Sistema:</span>
-                <span id="res-power">0 kWp</span>
-            </div>
-            <div class="result-row">
-                <span>Inversión Estimada Inicial:</span>
-                <span id="res-investment" style="color: #ff5252; font-weight: bold;">\$0 USD</span>
-            </div>
-            <div class="result-row" style="background: rgba(46, 125, 50, 0.1); padding: 10px; border-radius: 6px;">
-                <span>Retorno de Inversión (ROI):</span>
-                <span id="res-roi" class="highlight" style="color: #4caf50;">0 años</span>
-            </div>
-            <div class="result-row">
-                <span>Ahorro estimado en 25 años:</span>
-                <span id="res-savings" style="color: #4caf50;">\$0 USD</span>
-            </div>
-        </div>
+  <div class="container py-4" style="max-width: 520px;">
+    
+    <!-- Encabezado y GPS -->
+    <div class="card p-3 mb-3">
+      <h1 class="text-center h4">☀️ RayScan Colombia</h1>
+      <p class="text-center text-secondary small mb-2">Auditoría Solar por GPS · Precios COP · Recomendaciones</p>
+      <div>📍 <strong>Ubicación GPS:</strong> <span id="gps-display" class="text-warning">Detectando...</span></div>
+      <div id="climate-info" class="small text-secondary mt-1">Cargando historial de radiación...</div>
+      <div id="map"></div>
     </div>
 
-    <script>
-        // Matriz de física climática: Horas de Sol Pico (HSP) promedio histórico anual por Latitud
-        // Modela la nubosidad histórica, lluvias y radiación global real recibida por región
-        function obtenerHSPHistorico(latitude) {
-            let absLat = Math.abs(latitude);
-            if (absLat < 10) return 5.2;       // Zonas Ecuatoriales (Colombia, Venezuela, Ecuador - Alta radiación constante pero lluvias)
-            if (absLat < 23.5) return 5.8;     // Zonas Tropicales/Desérticas bajas (México Sur, Centroamérica, Caribe - Excelente radiación)
-            if (absLat < 35) return 4.7;       // Zonas Subtropicales (Norte de México, Sur de EE.UU., Chile Norte)
-            if (absLat < 45) return 3.8;       // Zonas Templadas (España, Argentina Central, Uruguay - Variación estacional alta)
-            return 3.0;                        // Zonas Altas / Hemisferio Norte profundo
+    <!-- Datos de consumo -->
+    <div class="card p-3 mb-3">
+      <h2 class="h5 text-center">📊 Datos de Consumo</h2>
+      <label for="bill-amount" class="form-label mt-2 small">Costo de tu última factura eléctrica (COP):</label>
+      <input type="number" id="bill-amount" class="form-control" value="250000" min="10000" step="10000">
+      
+      <label for="kwh-price" class="form-label mt-2 small">Precio del kWh en tu región (COP):</label>
+      <input type="number" id="kwh-price" class="form-control" value="900" min="400" step="50">
+      
+      <button onclick="calcularSimulacionSolar()" class="btn btn-warning w-100 mt-3 fw-bold">Calcular Proyecto Óptimo</button>
+    </div>
+
+    <!-- Resultados financieros -->
+    <div class="card p-3 mb-3" id="results-card" style="display: none;">
+      <h2 class="h5 text-center">📈 Viabilidad Financiera</h2>
+      
+      <div class="result-row"><span>Paneles Solares Requeridos:</span><span id="res-panels" class="highlight">0</span></div>
+      <div class="result-row"><span>Potencia Total del Sistema:</span><span id="res-power">0 kWp</span></div>
+      <div class="result-row"><span>Inversión Estimada Inicial:</span><span id="res-investment" class="text-danger fw-bold">$0 COP</span></div>
+      <div class="result-row bg-success bg-opacity-10 rounded p-2">
+        <span>Retorno de Inversión (ROI):</span>
+        <span id="res-roi" class="highlight text-success">0 años</span>
+      </div>
+      <div class="result-row"><span>Ahorro estimado en 25 años:</span><span id="res-savings" class="text-success">$0 COP</span></div>
+      <div class="result-row"><span>Consumo mensual estimado:</span><span id="res-consumo">0 kWh</span></div>
+    </div>
+
+    <!-- Recomendaciones de paneles -->
+    <div class="card p-3 mb-3" id="rec-card" style="display: none;">
+      <h2 class="h5 text-center">🔋 Recomendación de Paneles por Tamaño</h2>
+      <p class="small text-secondary text-center mb-3">Modelos disponibles en Colombia según tu potencia calculada</p>
+      <div id="recommendations"></div>
+    </div>
+
+    <!-- Notas legales -->
+    <div class="card p-3 mb-3">
+      <p class="small text-secondary mb-0">
+        ⚠️ <strong>Nota:</strong> Cálculos orientativos basados en precios de mercado colombiano 2025-2026 
+        ($3.6–$5.8M COP/kWp instalado). Cotiza siempre con un instalador certificado RETIE.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════
+    // MATRIZ CLIMÁTICA: HSP por latitud
+    // ═══════════════════════════════════════════
+    function obtenerHSPHistorico(latitude) {
+      const absLat = Math.abs(latitude);
+      if (absLat < 10) return 5.2;      // Ecuador, Colombia, Venezuela
+      if (absLat < 23.5) return 5.8;    // Trópico seco
+      if (absLat < 35) return 4.7;      // Subtropical
+      if (absLat < 45) return 3.8;      // Templado
+      return 3.0;                        // Altas latitudes
+    }
+
+    // ═══════════════════════════════════════════
+    // PRECIOS DE PANELES EN COLOMBIA (COP)
+    // ═══════════════════════════════════════════
+    const PRECIOS_PANELES = {
+      '400-450W': {
+        rango: '400–450 W',
+        modelos: [
+          { nombre: 'Sylvania 450W Monocristalino', precio: 323900 },
+          { nombre: 'Powest 450W HC PERC', precio: 580000 }
+        ],
+        wattsPorPanel: 0.45
+      },
+      '500-550W': {
+        rango: '500–550 W',
+        modelos: [
+          { nombre: 'Luxen 550W Monocristalino', precio: 348480 },
+          { nombre: 'JA Solar 550W', precio: 962900 },
+          { nombre: 'Trina Solar 550W', precio: 525000 }
+        ],
+        wattsPorPanel: 0.55
+      },
+      '580-620W': {
+        rango: '580–620 W',
+        modelos: [
+          { nombre: 'Tipo N 600W (>22% eficiencia)', precio: 819230 },
+          { nombre: 'Bifacial 610W', precio: 570000 }
+        ],
+        wattsPorPanel: 0.60
+      }
+    };
+
+    // ═══════════════════════════════════════════
+    // ESTADO GLOBAL
+    // ═══════════════════════════════════════════
+    let usuarioLat = 8.75;
+    let usuarioLon = -75.88;
+    let hspEstablecido = 5.2;
+    let map = null;
+    let marker = null;
+
+    // ═══════════════════════════════════════════
+    // INICIALIZAR MAPA SATELITAL
+    // ═══════════════════════════════════════════
+    function initMap(lat, lon) {
+      if (map) {
+        map.setView([lat, lon], 15);
+        if (marker) marker.setLatLng([lat, lon]);
+        return;
+      }
+      
+      map = L.map('map').setView([lat, lon], 15);
+      
+      // Capa satelital de ESRI (gratuita, sin API key)
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { attribution: 'Tiles © Esri', maxZoom: 19 }
+      ).addTo(map);
+      
+      // Marcador con popup
+      marker = L.marker([lat, lon]).addTo(map)
+        .bindPopup(`<b>📍 Tu ubicación</b><br>Lat: ${lat.toFixed(5)}<br>Lon: ${lon.toFixed(5)}`)
+        .openPopup();
+    }
+
+    // ═══════════════════════════════════════════
+    // GEOLOCALIZACIÓN
+    // ═══════════════════════════════════════════
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          usuarioLat = position.coords.latitude;
+          usuarioLon = position.coords.longitude;
+          hspEstablecido = obtenerHSPHistorico(usuarioLat);
+          
+          document.getElementById('gps-display').innerText = 
+            `${usuarioLat.toFixed(4)}, ${usuarioLon.toFixed(4)}`;
+          document.getElementById('climate-info').innerText = 
+            `Historial climático: ${hspEstablecido} Horas de Sol Pico/día en esta latitud.`;
+          
+          initMap(usuarioLat, usuarioLon);
+        },
+        err => {
+          document.getElementById('gps-display').innerText = 'Fijo (calibración local)';
+          document.getElementById('climate-info').innerText = 
+            `HSP por defecto: ${hspEstablecido} horas/día.`;
+          initMap(usuarioLat, usuarioLon);
         }
+      );
+    } else {
+      initMap(usuarioLat, usuarioLon);
+    }
 
-        let usuarioLat = 8.75; // Valores por defecto (Montería)
-        let usuarioLon = -75.88;
-        let hspEstablecido = 5.2;
+    // ═══════════════════════════════════════════
+    // FORMATEO DE MONEDA COP
+    // ═══════════════════════════════════════════
+    function formatCOP(valor) {
+      return '$' + Math.round(valor).toLocaleString('es-CO') + ' COP';
+    }
 
-        // Capturar la posición geográfica del ciudadano
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                usuarioLat = position.coords.latitude;
-                usuarioLon = position.coords.longitude;
-                hspEstablecido = obtenerHSPHistorico(usuarioLat);
-                
-                document.getElementById('gps-display').innerText = `${usuarioLat.toFixed(4)}, ${usuarioLon.toFixed(4)}`;
-                document.getElementById('climate-info').innerText = `Historial Climático Validado: ${hspEstablecido} Horas de Sol Pico promedio al día en esta latitud.`;
-            }, err => {
-                document.getElementById('gps-display').innerText = "Fijo (Usando calibración local)";
-                document.getElementById('climate-info').innerText = `Historial Climático por defecto: ${hspEstablecido} Horas de Sol Pico al día.`;
-            });
-        }
+    // ═══════════════════════════════════════════
+    // CÁLCULO PRINCIPAL
+    // ═══════════════════════════════════════════
+    function calcularSimulacionSolar() {
+      const costoFactura = parseFloat(document.getElementById('bill-amount').value) || 250000;
+      const precioKwh = parseFloat(document.getElementById('kwh-price').value) || 900;
 
-        function calcularSimulacionSolar() {
-            // 1. Obtener entradas del usuario
-            const costoFactura = parseFloat(document.getElementById('bill-amount').value);
-            const precioKwh = parseFloat(document.getElementById('kwh-price').value);
+      // Consumo
+      const consumoMensualKwh = costoFactura / precioKwh;
+      const consumoDiarioKwh = consumoMensualKwh / 30;
 
-            // 2. Ecuaciones Físicas y Económicas de Consumo
-            // Consumo mensual estimado en kWh = Costo total / Precio por kWh
-            const consumoMensualKwh = costoFactura / precioKwh;
-            const consumoDiarioKwh = consumoMensualKwh / 30;
+      // Dimensionamiento fotovoltaico
+      const eficienciaSistema = 0.8;
+      const potenciaSistemaKwp = consumoDiarioKwh / (hspEstablecido * eficienciaSistema);
 
-            // 3. Cálculo de Ingeniería del Tamaño del Sistema Fotovoltaico
-            // Potencia Necesaria (kW) = Consumo Diario / (Horas de Sol Pico * Eficiencia del sistema)
-            // Asumimos un factor de pérdida global estándar en física fotovoltaica de 0.8 (20% pérdidas por calor, cables e inversor)
-            const eficienciaSistema = 0.8;
-            const potenciaSistemaKwp = consumoDiarioKwh / (hspEstablecido * eficienciaSistema);
+      // Número de paneles (usando 450W como referencia base)
+      const potenciaPanelKwp = 0.45;
+      let panelesRequeridos = Math.ceil(potenciaSistemaKwp / potenciaPanelKwp);
+      if (panelesRequeridos < 1) panelesRequeridos = 1;
+      const potenciaTotalInstaladaKwp = panelesRequeridos * potenciaPanelKwp;
 
-            // Especificaciones de mercado de un panel estándar actual: 450 Watts (0.45 kW)
-            const potenciaPanelKwp = 0.45;
-            let panelesRequeridos = Math.ceil(potenciaSistemaKwp / potenciaPanelKwp);
-            if (panelesRequeridos < 1) panelesRequeridos = 1;
+      // Inversión: rango COP $3.6M–$5.8M por kWp instalado (usamos promedio $4.7M)
+      const costoPorKwp = 4700000;
+      const inversionEstimada = potenciaTotalInstaladaKwp * costoPorKwp;
 
-            const potenciaTotalInstaladaKwp = panelesRequeridos * potenciaPanelKwp;
+      // ROI y ahorro
+      const ahorroMensual = costoFactura * 0.95;
+      const ahorroAnual = ahorroMensual * 12;
+      const tiempoRetornoAnios = inversionEstimada / ahorroAnual;
+      const ahorroVeinticincoAnios = (ahorroAnual * 25) - inversionEstimada;
 
-            // 4. Ecuaciones de Costos del Mercado (Precios promedios instalados actuales de USD por Watt)
-            // A menor tamaño de sistema, el costo por watt es ligeramente más alto
-            const costoPorWatt = 1.20; 
-            const inversionEstimada = potenciaTotalInstaladaKwp * 1000 * costoPorWatt;
+      // Mostrar resultados
+      document.getElementById('res-panels').innerText = `${panelesRequeridos} uds`;
+      document.getElementById('res-power').innerText = `${potenciaTotalInstaladaKwp.toFixed(2)} kWp`;
+      document.getElementById('res-investment').innerText = formatCOP(inversionEstimada);
+      document.getElementById('res-roi').innerText = `${tiempoRetornoAnios.toFixed(1)} años`;
+      document.getElementById('res-savings').innerText = formatCOP(ahorroVeinticincoAnios);
+      document.getElementById('res-consumo').innerText = `${consumoMensualKwh.toFixed(0)} kWh/mes`;
+      document.getElementById('results-card').style.display = 'block';
 
-            // 5. Cálculo del Retorno de Inversión (ROI) y Beneficio Ciudadano
-            const ahorroMensual = costoFactura * 0.95; // Asumiendo que el sistema cubre el 95% del consumo
-            const ahorroAnual = ahorroMensual * 12;
-            const tiempoRetornoAnios = inversionEstimada / ahorroAnual;
+      // Generar recomendaciones de paneles
+      generarRecomendaciones(potenciaTotalInstaladaKwp);
+    }
 
-            // Ahorro neto a la vida útil de los paneles (25 años garantizados por física de degradación del silicio)
-            const ahorroVeinticincoAnios = (ahorroAnual * 25) - inversionEstimada;
+    // ═══════════════════════════════════════════
+    // RECOMENDACIONES DE PANELES POR TAMAÑO
+    // ═══════════════════════════════════════════
+    function generarRecomendaciones(potenciaTotalKwp) {
+      const container = document.getElementById('recommendations');
+      let html = '';
 
-            // 6. Desplegar los resultados en la interfaz comercial
-            document.getElementById('res-panels').innerText = `${panelesRequeridos} uds`;
-            document.getElementById('res-power').innerText = `${potenciaTotalInstaladaKwp.toFixed(2)} kWp`;
-            document.getElementById('res-investment').innerText = `$${Math.round(inversionEstimada).toLocaleString()} USD`;
-            document.getElementById('res-roi').innerText = `${tiempoRetornoAnios.toFixed(1)} años`;
-            document.getElementById('res-savings').innerText = `$${Math.round(ahorroVeinticincoAnios).toLocaleString()} USD`;
+      // Determinar qué categoría recomendar según la potencia
+      let categorias = [];
+      if (potenciaTotalKwp <= 2.0) {
+        categorias = ['400-450W'];  // Sistemas pequeños
+      } else if (potenciaTotalKwp <= 5.0) {
+        categorias = ['400-450W', '500-550W'];  // Sistemas residenciales
+      } else {
+        categorias = ['500-550W', '580-620W'];  // Sistemas medianos/grandes
+      }
 
-            document.getElementById('results-card').style.display = 'block';
-        }
-    </script>
+      categorias.forEach(catKey => {
+        const cat = PRECIOS_PANELES[catKey];
+        const panelesNecesarios = Math.ceil(potenciaTotalKwp / cat.wattsPorPanel);
+        
+        html += `<div class="rec-card">`;
+        html += `<h6>📦 ${cat.rango}</h6>`;
+        html += `<p class="small text-secondary mb-1">Necesitarías <strong>${panelesNecesarios} paneles</strong> de esta potencia</p>`;
+        
+        cat.modelos.forEach(m => {
+          const costoTotal = panelesNecesarios * m.precio;
+          html += `<div class="d-flex justify-content-between small py-1 border-bottom border-secondary">`;
+          html += `<span>${m.nombre}</span>`;
+          html += `<span class="text-warning">${formatCOP(m.precio)}/ud</span>`;
+          html += `</div>`;
+        });
+        
+        const promedioPrecio = cat.modelos.reduce((s, m) => s + m.precio, 0) / cat.modelos.length;
+        const costoTotalPromedio = panelesNecesarios * promedioPrecio;
+        html += `<div class="d-flex justify-content-between mt-2 pt-2 border-top border-secondary">`;
+        html += `<span class="fw-bold">Costo estimado módulos:</span>`;
+        html += `<span class="fw-bold text-success">${formatCOP(costoTotalPromedio)}</span>`;
+        html += `</div></div>`;
+      });
+
+      container.innerHTML = html;
+      document.getElementById('rec-card').style.display = 'block';
+    }
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
