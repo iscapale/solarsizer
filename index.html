@@ -541,53 +541,51 @@
       .openPopup();
   }
 
-  // ═══════════════════════════════════════════
-  // NASA POWER API
-  // ═══════════════════════════════════════════
-  async function obtenerDatosNASA(lat, lon) {
-    const url = `https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude=${lon}&latitude=${lat}&format=JSON`;
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('NASA no disponible');
-      const data = await response.json();
-      const props = data.properties.parameter.ALLSKY_SFC_SW_DWN;
+ // ═══════════════════════════════════════════
+// NASA POWER API (CORREGIDA)
+// ═══════════════════════════════════════════
+async function obtenerDatosNASA(lat, lon) {
+  const url = `https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude=${lon}&latitude=${lat}&format=JSON`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('NASA no disponible');
+    const data = await response.json();
+    const props = data.properties.parameter.ALLSKY_SFC_SW_DWN;
+    
+    // La API devuelve ANN (anual), JAN, FEB, MAR... (meses)
+    let valor = null;
+    
+    // 1. Intentar con el promedio anual directo
+    if (props.ANN !== undefined && props.ANN !== null && !isNaN(props.ANN)) {
+      valor = props.ANN;
+    } else {
+      // 2. Si no hay ANN, promediar los meses
+      const meses = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
       let suma = 0, count = 0;
-      for (let mes = 1; mes <= 12; mes++) {
-        const v = props[String(mes).padStart(2, '0')];
-        if (v !== undefined && v !== null) { suma += v; count++; }
-      }
-      ghiActual = suma / count;
-      actualizarInfoClima(ghiActual, false);
-    } catch (e) {
-      console.warn('NASA POWER falló, usando estimación:', e);
-      ghiActual = estimarGHIPorLatitud(lat);
-      actualizarInfoClima(ghiActual, true);
+      meses.forEach(m => {
+        if (props[m] !== undefined && props[m] !== null && !isNaN(props[m])) {
+          suma += props[m];
+          count++;
+        }
+      });
+      if (count > 0) valor = suma / count;
     }
+    
+    // 3. Si nada funcionó, usar estimación por latitud
+    if (valor === null || isNaN(valor) || valor <= 0) {
+      throw new Error('Datos inválidos de NASA');
+    }
+    
+    ghiActual = valor;
+    actualizarInfoClima(ghiActual, false);
+    
+  } catch (e) {
+    console.warn('NASA POWER falló, usando estimación por latitud:', e);
+    ghiActual = estimarGHIPorLatitud(lat);
+    actualizarInfoClima(ghiActual, true);
   }
-
-  function actualizarInfoClima(ghi, esEstimado) {
-    const zona = ghi > 4.8 ? 'excelente' : ghi > 4.0 ? 'muy buena' : ghi > 3.2 ? 'moderada' : 'baja';
-    const colorBadge = ghi > 4.5 ? 'badge-green' : ghi > 3.5 ? 'badge-yellow' : 'badge-red';
-    document.getElementById('climate-info').innerHTML = `
-      <span class="emoji">🛰️</span> ${esEstimado ? '<em>Estimación por ubicación:</em>' : '<strong>Datos de la NASA obtenidos:</strong>'}
-      En tu zona, el sol entrega <strong>${ghi.toFixed(2)} kWh por m² al día</strong> — potencial solar <span class="badge ${colorBadge}">${zona.toUpperCase()}</span>.
-      <div class="help-text" style="margin-top: 8px;">
-        ${ghi > 4.5 ? '☀️ Tu zona es ideal para energía solar. Recibirás energía abundante todo el año.' : 
-          ghi > 3.5 ? '🌤️ Tu zona tiene buen potencial solar. Los paneles funcionarán bien.' :
-          '☁️ Tu zona tiene menos sol directo, pero los paneles aún pueden generar ahorros.'}
-      </div>
-    `;
-    document.getElementById('climate-info').className = 'explain-box ' + (ghi > 4.5 ? 'green' : 'blue');
-  }
-
-  function estimarGHIPorLatitud(lat) {
-    const abs = Math.abs(lat);
-    if (abs < 4) return 4.8;
-    if (abs < 8) return 4.5;
-    if (abs < 11) return 5.2;
-    if (abs < 13) return 5.5;
-    return 4.8;
-  }
+}
 
   // ═══════════════════════════════════════════
   // GPS — LLAMADA DIRECTA (como en versiones anteriores)
