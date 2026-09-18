@@ -210,6 +210,150 @@
     .action-row {
       display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
     }
+    
+    .type-card {
+      background: var(--bg-highlight);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .type-card h4 {
+      color: var(--yellow);
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .type-card .type-desc {
+      font-size: 0.88rem;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .type-card .type-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .spec-tag {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+    .spec-tag.good { border-color: #1e4d2e; color: var(--green); background: var(--green-bg); }
+    .spec-tag.warn { border-color: #5a4f1c; color: var(--yellow); background: #2a2510; }
+    
+    .brand-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-highlight);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .brand-card .brand-flag {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .brand-card .brand-info { flex: 1; }
+    .brand-card .brand-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .brand-card .brand-detail {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .brand-card .brand-tier {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 7px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .tier-1 { background: #1e4d2e; color: var(--green); border: 1px solid #2e7d32; }
+    .tier-2 { background: #2a2510; color: var(--yellow); border: 1px solid #5a4f1c; }
+    
+    .provider-card {
+      background: var(--bg-highlight);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+    .provider-card .provider-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--yellow);
+      margin-bottom: 4px;
+    }
+    .provider-card .provider-desc {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .provider-card .provider-contact {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .provider-card .provider-contact span { display: flex; align-items: center; gap: 6px; }
+    .provider-card .provider-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    
+    .disclaimer-box {
+      background: #2b1d10;
+      border-left: 4px solid var(--orange);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+      font-size: 0.88rem;
+      color: var(--text-soft);
+      line-height: 1.55;
+    }
+    
+    .panel-specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .panel-spec-item {
+      background: var(--bg-input);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .panel-spec-item .spec-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .panel-spec-item .spec-val {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--yellow);
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -235,7 +379,6 @@
       <span class="loading"></span> Consultando datos de la NASA...
     </div>
     
-    <!-- Selector de ciudad (solo aparece si el GPS falla) -->
     <div id="city-fallback" style="display: none;">
       <label for="city-select" style="margin-top: 12px;">🏙️ Selecciona tu ciudad:</label>
       <select id="city-select" class="form-select" onchange="seleccionarCiudad()">
@@ -265,7 +408,6 @@
       </select>
     </div>
     
-    <!-- Botones auxiliares -->
     <div class="action-row">
       <button type="button" class="btn-secondary" onclick="reintentarGPS()">🔄 Reintentar GPS</button>
       <button type="button" class="btn-secondary" onclick="toggleManual()">✏️ Coordenadas manuales</button>
@@ -416,7 +558,7 @@
     <div class="hero-result">
       <div class="label">Paneles solares necesarios</div>
       <div class="value" id="res-panels">—</div>
-      <div class="sub" id="res-panels-sub">de 550 W cada uno</div>
+      <div class="sub" id="res-panels-sub">de 630 W cada uno</div>
     </div>
     
     <div class="result-row">
@@ -487,10 +629,275 @@
     </div>
   </div>
 
+  <!-- ═══════ PASO 7: TIPOS DE PANELES ═══════ -->
+  <div class="card step-section" id="section-types">
+    <h2><span class="step-badge">7</span> Tipos de paneles solares</h2>
+    <div class="explain-box blue">
+      <span class="emoji">🔬</span> No todos los paneles son iguales. Estos son los tipos que se consiguen en Colombia en 2026, con sus ventajas y para quién son ideales.
+    </div>
+    
+    <!-- PANEL 630W DESTACADO -->
+    <div class="type-card" style="border: 2px solid var(--green);">
+      <h4>⭐ Panel de 630W (Alta Potencia — Recomendado 2026)</h4>
+      <div class="type-desc">
+        La nueva generación de paneles que está dominando el mercado colombiano. Usan tecnología <strong>N-Type TOPCon o HJT</strong> con eficiencia superior al <strong>22.5%</strong>. Son bifaciales (capturan luz por ambas caras) y rinden mejor en climas cálidos como el de Córdoba. <strong>Ocupan menos espacio por vatio instalado</strong>.
+      </div>
+      <div class="panel-specs-grid">
+        <div class="panel-spec-item">
+          <div class="spec-label">Potencia</div>
+          <div class="spec-val">630 W</div>
+        </div>
+        <div class="panel-spec-item">
+          <div class="spec-label">Eficiencia</div>
+          <div class="spec-val">>22.5%</div>
+        </div>
+        <div class="panel-spec-item">
+          <div class="spec-label">Área por panel</div>
+          <div class="spec-val">2.7 m²</div>
+        </div>
+        <div class="panel-spec-item">
+          <div class="spec-label">Garantía</div>
+          <div class="spec-val">25-30 años</div>
+        </div>
+      </div>
+      <div class="type-specs">
+        <span class="spec-tag good">✓ Mayor potencia por m²</span>
+        <span class="spec-tag good">✓ Bifacial (30% extra)</span>
+        <span class="spec-tag good">✓ Ideal para clima cálido</span>
+        <span class="spec-tag good">✓ Menos paneles necesarios</span>
+        <span class="spec-tag">Precio: $410.000 – $570.000 COP</span>
+      </div>
+    </div>
+    
+    <div class="type-card">
+      <h4>💎 Monocristalino PERC (el más usado)</h4>
+      <div class="type-desc">
+        Fabricado con silicio de un solo cristal. Es el <strong>más eficiente</strong> del mercado tradicional: convierte entre el <strong>20% y 22%</strong> de la luz solar en electricidad. Ideal si tienes poco espacio en el techo.
+      </div>
+      <div class="type-specs">
+        <span class="spec-tag good">✓ Alta eficiencia (20-22%)</span>
+        <span class="spec-tag good">✓ Mejor rendimiento con calor</span>
+        <span class="spec-tag good">✓ Garantía 25-30 años</span>
+        <span class="spec-tag">Precio: $$</span>
+      </div>
+    </div>
+    
+    <div class="type-card">
+      <h4>🔷 Policristalino (el económico)</h4>
+      <div class="type-desc">
+        Hecho con silicio fundido en moldes cuadrados. Su eficiencia es <strong>menor (15-18%)</strong>, así que necesitas más paneles para la misma energía. Es una opción si el espacio no es problema y buscas el menor precio inicial.
+      </div>
+      <div class="type-specs">
+        <span class="spec-tag warn">⚠ Eficiencia menor (15-18%)</span>
+        <span class="spec-tag warn">⚠ Ocupa más espacio</span>
+        <span class="spec-tag good">✓ Precio más bajo</span>
+        <span class="spec-tag">Precio: $</span>
+      </div>
+    </div>
+    
+    <div class="explain-box green">
+      <span class="emoji">💡</span> <strong>Recomendación práctica para Córdoba:</strong> con el calor intenso y la alta radiación de la región, los paneles de <strong>630W N-Type TOPCon/HJT</strong> son la mejor elección. Rinden mejor a altas temperaturas (coeficiente de temperatura ~-0.24%/°C vs -0.35%/°C de los PERC), duran más y necesitas menos paneles para la misma potencia.
+    </div>
+  </div>
+
+  <!-- ═══════ PASO 8: MARCAS TIER 1 ═══════ -->
+  <div class="card step-section" id="section-brands">
+    <h2><span class="step-badge">8</span> Marcas Tier 1 disponibles en Colombia</h2>
+    <div class="explain-box blue">
+      <span class="emoji">🏷️</span> Estas son las marcas clasificadas como <strong>Tier 1 por BloombergNEF</strong> en 2026 — el estándar más respetado del mundo. Significa que son financieramente estables y sus garantías están respaldadas de verdad.
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">LONGi Solar</div>
+        <div class="brand-detail">Líder global en monocristalino. Tier 1 Q2 2026. Calificación Grade A de Wood Mackenzie y rating AAA de PV Tech por 25 trimestres consecutivos. Paneles de 630W disponibles. [reference:0]</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">Jinko Solar</div>
+        <div class="brand-detail">Mayor fabricante del mundo con 120.000 MW/año de capacidad. Tier 1 BNEF y S&P Global 2026. Tiger Neo N-Type de 630W disponible en Colombia. [reference:1]</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">Trina Solar</div>
+        <div class="brand-detail">100.000 MW/año de capacidad. Vertex N 630W con eficiencia 23.3% y tecnología N-Type i-TOPCon. Excelente rendimiento en climas cálidos. [reference:2]</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">JA Solar</div>
+        <div class="brand-detail">100.000 MW/año. Referencia global en fiabilidad. Panel de 630W N-Type bifacial disponible. Tier 1 Q2 2026. [reference:3]</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">AIKO Solar</div>
+        <div class="brand-detail">35.500 MW/año. Una de las marcas de mayor crecimiento, reconocida por su tecnología ABC de alta eficiencia (>24%). Tier 1 Q2 2026. [reference:4]</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">Haitai Solar</div>
+        <div class="brand-detail">Reconocida como Tier 1 por BloombergNEF Q1 2026. Distribución activa en Colombia. [reference:5]</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇦</span>
+      <div class="brand-info">
+        <div class="brand-name">Canadian Solar</div>
+        <div class="brand-detail">Fabricante canadiense Tier 1 con presencia global. Paneles duraderos y buen desempeño en climas cálidos. Múltiples modelos de 600W+ disponibles en Colombia.</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">DMEGC Solar</div>
+        <div class="brand-detail">Uno de los pocos fabricantes clasificados Tier 1 simultáneamente por BNEF, S&P Global y SMM. [reference:6]</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="brand-card">
+      <span class="brand-flag">🇨🇳</span>
+      <div class="brand-info">
+        <div class="brand-name">Astronergy (Chint Solar)</div>
+        <div class="brand-detail">Tier 1 BNEF 2026. Tecnología TOPCon con buena relación precio-eficiencia. Presencia creciente en Colombia.</div>
+      </div>
+      <span class="brand-tier tier-1">TIER 1</span>
+    </div>
+    
+    <div class="explain-box">
+      <span class="emoji">💡</span> <strong>¿Qué significa Tier 1?</strong> BloombergNEF otorga esta clasificación a fabricantes que han suministrado módulos propios en al menos 6 proyectos de 10 MW o más, financiados por 6 bancos comerciales distintos. Es una señal de que los bancos consideran al fabricante lo suficientemente estable para respaldar inversiones a largo plazo. [reference:7]
+    </div>
+  </div>
+
+  <!-- ═══════ PASO 9: EMPRESAS EN CÓRDOBA ═══════ -->
+  <div class="card step-section" id="section-providers">
+    <h2><span class="step-badge">9</span> Empresas instaladoras en Córdoba</h2>
+    <div class="explain-box blue">
+      <span class="emoji">🏢</span> Estas empresas prestan servicio de instalación de paneles solares en Montería y el departamento de Córdoba. Verifica siempre la certificación RETIE al momento de contratar.
+    </div>
+    
+    <div class="provider-card">
+      <div class="provider-name">⚡ ELEC S.A.</div>
+      <div class="provider-desc">
+        Empresa monteriana con más de una década en energía solar. Ha instalado más de <strong>85.000 paneles</strong> en Colombia. Proyectos destacados: Hotel GHL Montería. Ofrece diseño, construcción, puesta en marcha y postventa. [reference:8]
+      </div>
+      <div class="provider-contact">
+        <span>📍 Montería, Córdoba</span>
+        <span>🌐 elecsa.com.co</span>
+        <span>✅ Certificación RETIE</span>
+      </div>
+      <div class="provider-tags">
+        <span class="spec-tag good">Residencial</span>
+        <span class="spec-tag good">Comercial</span>
+        <span class="spec-tag good">Industrial</span>
+        <span class="spec-tag good">Hotelero</span>
+      </div>
+    </div>
+    
+    <div class="provider-card">
+      <div class="provider-name">🔆 Sonnen Energías Renovables</div>
+      <div class="provider-desc">
+        Empresa de ingeniería eléctrica especializada en energía solar. Respaldo de SENA y Fondo Emprender. Diseño e instalación de sistemas ON GRID y OFF GRID, incluyendo bombeo de agua solar. [reference:9]
+      </div>
+      <div class="provider-contact">
+        <span>📍 Montería, Córdoba</span>
+        <span>🌐 linkedin.com/company/sonnenenergias</span>
+        <span>📅 Fundada en 2014</span>
+      </div>
+      <div class="provider-tags">
+        <span class="spec-tag good">ON GRID</span>
+        <span class="spec-tag good">OFF GRID</span>
+        <span class="spec-tag good">Bombeo solar</span>
+      </div>
+    </div>
+    
+    <div class="provider-card">
+      <div class="provider-name">☀️ Sol&Cielo Energía S.A.S. ESP</div>
+      <div class="provider-desc">
+        Empresa monteriana con proyectos de generación distribuida. Ubicada en La Castellana. Ofrece cotizaciones para residencial y comercial. [reference:10]
+      </div>
+      <div class="provider-contact">
+        <span>📍 Calle 61 #7-71, La Castellana, Montería</span>
+        <span>📞 +57 315 776 6930</span>
+        <span>🌐 sol-cielo.com</span>
+      </div>
+      <div class="provider-tags">
+        <span class="spec-tag good">Residencial</span>
+        <span class="spec-tag good">Comercial</span>
+        <span class="spec-tag good">Generación distribuida</span>
+      </div>
+    </div>
+    
+    <div class="provider-card">
+      <div class="provider-name">🌿 Terrall Solnet</div>
+      <div class="provider-desc">
+        Empresa de ingeniería con presencia en la Costa Caribe. Diseña e instala sistemas solares con acompañamiento completo. Oficina en La Castellana. [reference:11]
+      </div>
+      <div class="provider-contact">
+        <span>📍 Calle 13 bis #64-12 local 01, La Castellana, Montería</span>
+        <span>📞 +57 311 684 1148</span>
+        <span>✉️ directorregionalcosta@terrall.com.co</span>
+      </div>
+      <div class="provider-tags">
+        <span class="spec-tag good">Comercial</span>
+        <span class="spec-tag good">Industrial</span>
+        <span class="spec-tag good">Legalización</span>
+      </div>
+    </div>
+    
+    <div class="provider-card">
+      <div class="provider-name">💧 PULSO SINÚ</div>
+      <div class="provider-desc">
+        Empresa ubicada en San Bernardo del Viento. Especializada en energías renovables y sistemas fotovoltaicos. Ofrece mantenimiento preventivo de sistemas solares. [reference:12]
+      </div>
+      <div class="provider-contact">
+        <span>📍 Vereda Nueva España, San Bernardo del Viento, Córdoba</span>
+        <span>✅ Normativa NTC 2050 y RETIE</span>
+      </div>
+      <div class="provider-tags">
+        <span class="spec-tag good">Residencial</span>
+        <span class="spec-tag good">Mantenimiento</span>
+      </div>
+    </div>
+    
+    <div class="disclaimer-box">
+      ⚠️ <strong>Importante antes de contratar:</strong><br><br>
+      • <strong>Verifica la certificación RETIE</strong> del instalador. Es obligatoria en Colombia y garantiza que la instalación cumple con las normas de seguridad eléctrica.<br><br>
+      • <strong>Pide mínimo 3 cotizaciones</strong> de empresas diferentes para comparar precios y alcance del servicio.<br><br>
+      • <strong>Pregunta por la garantía</strong>: los paneles deben tener garantía de producto (10-15 años) y de producción (25-30 años).<br><br>
+      • <strong>Confirma que gestionen los trámites</strong> ante tu operador de red (Afinia en Córdoba) y la UPME para la conexión.<br><br>
+      • <strong>Visita proyectos ya instalados</strong> por la empresa para ver la calidad del trabajo.
+    </div>
+  </div>
+
   <div class="card step-section" id="section-note">
     <p class="footnote">
       ℹ️ <strong>Sobre estos cálculos:</strong> Usamos datos satelitales de la NASA sobre radiación solar, 
-      precios promedios del mercado colombiano 2025-2026 y estándares internacionales de ingeniería fotovoltaica. 
+      precios promedios del mercado colombiano 2025-2026 (panel de 630W de referencia) y estándares internacionales de ingeniería fotovoltaica. 
       Los resultados son estimaciones: una cotización con un instalador certificado RETIE te dará el valor exacto.
     </p>
   </div>
@@ -509,11 +916,11 @@
   let gpsObtenido = false;
 
   // ═══════════════════════════════════════════
-  // CONSTANTES
+  // CONSTANTES — ACTUALIZADAS A PANEL 630W
   // ═══════════════════════════════════════════
-  const POTENCIA_PANEL_KWP = 0.55;
-  const AREA_PANEL_M2 = 2.6;
-  const EFICIENCIA_PANEL = 0.21;
+  const POTENCIA_PANEL_KWP = 0.63;      // Panel de 630W (antes 550W)
+  const AREA_PANEL_M2 = 2.70;            // 2.38m × 1.13m ≈ 2.70 m²
+  const EFICIENCIA_PANEL = 0.23;         // 23% para N-Type TOPCon/HJT
   const COSTO_POR_KWP_COP = 4500000;
   const COBERTURA_OBJETIVO = 0.85;
   const FACTOR_CO2_KG_KWH = 0.164;
@@ -542,7 +949,7 @@
   }
 
   // ═══════════════════════════════════════════
-  // NASA POWER API (CORREGIDA)
+  // NASA POWER API
   // ═══════════════════════════════════════════
   async function obtenerDatosNASA(lat, lon) {
     const url = `https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude=${lon}&latitude=${lat}&format=JSON`;
@@ -555,11 +962,9 @@
       
       let valor = null;
       
-      // 1. Intentar con el promedio anual directo (ANN)
       if (props.ANN !== undefined && props.ANN !== null && !isNaN(props.ANN) && props.ANN > 0) {
         valor = props.ANN;
       } else {
-        // 2. Si no hay ANN, promediar los 12 meses (JAN, FEB, ...)
         const meses = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
         let suma = 0, count = 0;
         meses.forEach(m => {
@@ -571,7 +976,6 @@
         if (count > 0) valor = suma / count;
       }
       
-      // 3. Si nada funcionó, lanzar error para caer al fallback
       if (valor === null || isNaN(valor) || valor <= 0) {
         throw new Error('Datos inválidos de NASA');
       }
@@ -611,7 +1015,7 @@
   }
 
   // ═══════════════════════════════════════════
-  // GPS — LLAMADA DIRECTA
+  // GPS
   // ═══════════════════════════════════════════
   function detectarGPS() {
     const gpsDisplay = document.getElementById('gps-display');
@@ -657,11 +1061,7 @@
         climateInfo.className = 'explain-box warn';
         usarCiudadPorDefecto();
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 60000
-      }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
     );
   }
 
@@ -728,7 +1128,7 @@
   }
 
   // ═══════════════════════════════════════════
-  // CÁLCULO PRINCIPAL
+  // CÁLCULO PRINCIPAL (PANEL 630W)
   // ═══════════════════════════════════════════
   function calcularTodo() {
     if (!ghiActual) {
@@ -745,7 +1145,6 @@
     const precioKwhCOP = parseFloat(document.getElementById('kwh-price').value) || 900;
     const consumoMensualKwh = facturaCOP / precioKwhCOP;
     
-    // Factor geométrico
     const latAbs = Math.abs(usuarioLat);
     const inclinacionOptima = Math.min(latAbs, 15);
     const desvInc = Math.abs(inclinacion - inclinacionOptima);
@@ -754,13 +1153,11 @@
     const factorOr = Math.max(0.65, 1 - (desvOr * 0.003));
     const factorGeom = factorInc * factorOr;
     
-    // Energía captable
     const energiaDiaria = ghiActual * areaTecho * factorGeom * factorShading;
     const energiaMensual = energiaDiaria * 30.44;
     const energiaAnual = energiaDiaria * 365.25;
     const eficienciaTecho = factorGeom * factorShading * 100;
     
-    // Dimensionamiento
     const energiaObjetivoMensual = consumoMensualKwh * COBERTURA_OBJETIVO;
     const produccionKwhPorKwpMes = ghiActual * 30.44 * factorGeom * factorShading * EFICIENCIA_PANEL;
     const potenciaSistemaKwp = energiaObjetivoMensual / produccionKwhPorKwpMes;
@@ -779,7 +1176,6 @@
     const potenciaFinalKwp = numPanelesFinal * POTENCIA_PANEL_KWP;
     const areaFinalNecesaria = numPanelesFinal * AREA_PANEL_M2;
     
-    // Financieros
     const inversionCOP = potenciaFinalKwp * COSTO_POR_KWP_COP;
     const produccionMensualKwh = potenciaFinalKwp * produccionKwhPorKwpMes;
     const kwhAhorradosMes = Math.min(produccionMensualKwh, consumoMensualKwh);
@@ -792,7 +1188,6 @@
     const co2EvitadoKg = kwhAnualesGenerados * FACTOR_CO2_KG_KWH;
     const arbolesEquivalentes = Math.round(co2EvitadoKg / CO2_POR_ARBOL_ANUAL);
     
-    // Mostrar resultados
     document.getElementById('res-ghi').innerText = ghiActual.toFixed(2);
     document.getElementById('res-daily').innerText = energiaDiaria.toFixed(1);
     document.getElementById('res-monthly').innerText = energiaMensual.toFixed(0);
@@ -801,7 +1196,7 @@
     document.getElementById('efficiency-bar').style.width = eficienciaTecho + '%';
     
     document.getElementById('res-panels').innerText = numPanelesFinal;
-    document.getElementById('res-panels-sub').innerText = numPanelesFinal === 1 ? 'panel de 550 W' : 'paneles de 550 W cada uno';
+    document.getElementById('res-panels-sub').innerText = numPanelesFinal === 1 ? 'panel de 630 W' : 'paneles de 630 W cada uno';
     document.getElementById('res-power').innerText = potenciaFinalKwp.toFixed(2) + ' kWp';
     document.getElementById('res-area-used').innerText = areaFinalNecesaria.toFixed(1) + ' m²';
     
@@ -816,7 +1211,7 @@
     if (cabeEnTecho) {
       panelExplain.innerHTML = `
         <span class="emoji">✅</span> ¡Buenas noticias! Tu techo tiene espacio suficiente. 
-        Los ${numPanelesFinal} paneles ocuparán aproximadamente <strong>${areaFinalNecesaria.toFixed(1)} m²</strong> 
+        Los ${numPanelesFinal} paneles de <strong>630W</strong> ocuparán aproximadamente <strong>${areaFinalNecesaria.toFixed(1)} m²</strong> 
         de los ${areaTecho} m² que tienes disponibles. Te sobra espacio para expandir en el futuro.
       `;
     } else {
@@ -834,8 +1229,7 @@
     document.getElementById('res-co2').innerText = Math.round(co2EvitadoKg).toLocaleString('es-CO') + ' kg';
     document.getElementById('res-trees').innerText = arbolesEquivalentes + ' árboles';
     
-    // Mostrar todas las secciones
-    ['section-energy', 'section-panels', 'section-money', 'section-note'].forEach(id => {
+    ['section-energy', 'section-panels', 'section-money', 'section-types', 'section-brands', 'section-providers', 'section-note'].forEach(id => {
       document.getElementById(id).classList.add('visible');
     });
     
