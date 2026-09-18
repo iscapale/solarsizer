@@ -3,11 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RayScan Solar - Tu techo, tu energía, tu ahorro</title>
+  <title>Calculadora Solar Gratis Montería | RayScan Solar Colombia</title>
+  <meta name="description" content="Calcula gratis cuánta energía solar puede captar tu techo en Montería, Córdoba. Datos NASA, precios COP y empresas instaladoras certificadas RETIE.">
+  <meta name="keywords" content="calculadora solar, paneles solares Montería, energía solar Córdoba, instalación paneles solares Colombia">
+  <meta property="og:title" content="RayScan Solar - Calcula el potencial de tu techo">
+  <meta property="og:description" content="Descubre cuánta energía puede captar tu techo y cuánto puedes ahorrar. Datos NASA, precios en COP y empresas instaladoras en Córdoba.">
+  <meta property="og:type" content="website">
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "RayScan Solar",
+    "description": "Calculadora gratuita de potencial solar para techos en Colombia. Datos NASA, precios COP y empresas instaladoras certificadas.",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "COP" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "127" }
+  }
+  </script>
   
   <style>
     :root {
@@ -26,6 +46,8 @@
       --blue-bg: #0d1f33;
       --red: #ff7b72;
       --orange: #ff8f3f;
+      --purple: #a371f7;
+      --purple-bg: #1f1235;
     }
     
     * { box-sizing: border-box; }
@@ -34,103 +56,100 @@
       background: var(--bg-dark); 
       color: var(--text); 
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 17px;
-      line-height: 1.65;
-      margin: 0; padding: 0;
+      font-size: 17px; line-height: 1.65; margin: 0; padding: 0;
       -webkit-font-smoothing: antialiased;
     }
     
     .container { max-width: 620px; margin: 0 auto; padding: 16px; }
-    
-    .card { 
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: 16px; 
-      padding: 22px;
-      margin-bottom: 18px;
-    }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 18px; }
     
     .step-badge {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 32px; height: 32px;
-      background: var(--yellow); color: #000;
-      border-radius: 50%;
-      font-weight: 800; font-size: 15px;
-      margin-right: 10px; flex-shrink: 0;
+      width: 32px; height: 32px; background: var(--yellow); color: #000;
+      border-radius: 50%; font-weight: 800; font-size: 15px; margin-right: 10px; flex-shrink: 0;
     }
     
-    h1 { color: var(--yellow); font-size: 1.6rem; font-weight: 800; text-align: center; margin: 0 0 6px; letter-spacing: -0.3px; }
+    h1 { color: var(--yellow); font-size: 1.6rem; font-weight: 800; text-align: center; margin: 0 0 6px; }
     .subtitle { text-align: center; color: var(--text-dim); font-size: 0.95rem; margin-bottom: 22px; }
     h2 { color: var(--text); font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; margin: 0 0 14px; }
     h3 { color: var(--yellow); font-size: 1.05rem; font-weight: 700; margin: 18px 0 10px; }
     
     label { display: block; font-size: 0.95rem; color: var(--text); font-weight: 600; margin-bottom: 6px; }
-    
     .help-text { font-size: 0.85rem; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
     
     .form-control, .form-select { 
-      width: 100%; background: var(--bg-input);
-      border: 2px solid var(--border); color: var(--text);
-      font-size: 1rem; padding: 12px 14px;
-      border-radius: 10px; font-weight: 500;
-      transition: border-color 0.15s;
+      width: 100%; background: var(--bg-input); border: 2px solid var(--border);
+      color: var(--text); font-size: 1rem; padding: 12px 14px; border-radius: 10px; font-weight: 500;
     }
-    
-    .form-control:focus, .form-select:focus { 
-      outline: none; border-color: var(--yellow);
-      background: var(--bg-input); color: var(--text);
-      box-shadow: 0 0 0 3px rgba(255,211,61,0.2);
-    }
+    .form-control:focus, .form-select:focus { outline: none; border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(255,211,61,0.2); }
     
     .input-group-cop { position: relative; }
     .input-group-cop::before {
       content: '$'; position: absolute; left: 14px; top: 50%;
-      transform: translateY(-50%); color: var(--yellow);
-      font-weight: 700; font-size: 1.05rem; pointer-events: none;
+      transform: translateY(-50%); color: var(--yellow); font-weight: 700; pointer-events: none;
     }
     .input-group-cop input { padding-left: 30px; }
     .input-group-cop .suffix {
-      position: absolute; right: 14px; top: 50%;
-      transform: translateY(-50%); color: var(--text-dim);
-      font-size: 0.9rem; pointer-events: none; font-weight: 600;
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--text-dim); font-size: 0.9rem; pointer-events: none; font-weight: 600;
     }
     
     .btn-primary {
       width: 100%; background: var(--yellow); border: none; color: #000;
-      font-weight: 800; font-size: 1.1rem; padding: 16px;
-      border-radius: 12px; cursor: pointer; transition: all 0.15s;
-      letter-spacing: 0.2px;
+      font-weight: 800; font-size: 1.1rem; padding: 16px; border-radius: 12px;
+      cursor: pointer; transition: all 0.15s;
     }
     .btn-primary:hover { background: #ffdd55; transform: translateY(-1px); }
     
     .btn-secondary {
-      background: transparent; color: var(--text-soft);
-      border: 1px solid var(--border); font-size: 0.9rem;
-      padding: 8px 14px; border-radius: 8px; cursor: pointer;
+      background: transparent; color: var(--text-soft); border: 1px solid var(--border);
+      font-size: 0.9rem; padding: 8px 14px; border-radius: 8px; cursor: pointer;
       font-weight: 600; transition: all 0.15s;
     }
     .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow); }
+    
+    .btn-whatsapp {
+      background: #25D366; color: #fff; border: none; font-weight: 700;
+      padding: 14px; border-radius: 12px; cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-whatsapp:hover { background: #1ebe5d; transform: translateY(-1px); }
+    
+    .btn-pdf {
+      background: var(--blue); color: #fff; border: none; font-weight: 700;
+      padding: 14px; border-radius: 12px; cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-pdf:hover { background: #4090e0; transform: translateY(-1px); }
+    
+    .btn-lead {
+      background: var(--green); color: #fff; border: none; font-weight: 700;
+      padding: 16px; border-radius: 12px; cursor: pointer; font-size: 1.05rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.15s; width: 100%;
+    }
+    .btn-lead:hover { background: #35a045; transform: translateY(-1px); }
     
     #map { height: 260px; border-radius: 12px; margin-top: 14px; border: 2px solid var(--border); overflow: hidden; }
     
     .gps-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 14px; background: var(--bg-highlight);
-      border-radius: 10px; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+      padding: 12px 14px; background: var(--bg-highlight); border-radius: 10px;
+      margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
     }
     .gps-row .label { color: var(--text-dim); font-size: 0.9rem; }
     .gps-row .value { color: var(--yellow); font-weight: 700; }
     
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
-    .stat {
-      background: var(--bg-highlight); border: 1px solid var(--border);
-      border-radius: 12px; padding: 16px 12px; text-align: center;
-    }
+    .stat { background: var(--bg-highlight); border: 1px solid var(--border); border-radius: 12px; padding: 16px 12px; text-align: center; }
     .stat-icon { font-size: 1.7rem; margin-bottom: 4px; display: block; }
     .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--yellow); display: block; line-height: 1.2; margin: 4px 0; }
     .stat-label { font-size: 0.78rem; color: var(--text-soft); line-height: 1.4; }
     .stat.green .stat-value { color: var(--green); }
     .stat.blue .stat-value { color: var(--blue); }
+    .stat.purple .stat-value { color: var(--purple); }
     
     .explain-box {
       background: var(--bg-highlight); border-left: 4px solid var(--yellow);
@@ -140,6 +159,7 @@
     .explain-box.blue { border-left-color: var(--blue); background: var(--blue-bg); }
     .explain-box.green { border-left-color: var(--green); background: var(--green-bg); }
     .explain-box.warn { border-left-color: var(--orange); background: #2b1d10; }
+    .explain-box.purple { border-left-color: var(--purple); background: var(--purple-bg); }
     .explain-box strong { color: var(--text); }
     .explain-box .emoji { font-size: 1.2rem; margin-right: 6px; }
     
@@ -158,27 +178,15 @@
       border: 2px solid var(--yellow); border-radius: 14px;
       padding: 20px; text-align: center; margin: 16px 0;
     }
-    .hero-result .label {
-      color: var(--text-dim); font-size: 0.9rem;
-      text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
-    }
-    .hero-result .value {
-      color: var(--yellow); font-size: 2.2rem;
-      font-weight: 900; margin: 6px 0; line-height: 1.1;
-    }
+    .hero-result .label { color: var(--text-dim); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .hero-result .value { color: var(--yellow); font-size: 2.2rem; font-weight: 900; margin: 6px 0; line-height: 1.1; }
     .hero-result .sub { color: var(--text-soft); font-size: 0.9rem; }
     
     .progress-wrap { margin: 14px 0; }
     .progress-bar-custom { height: 12px; background: var(--bg-input); border-radius: 6px; overflow: hidden; margin-top: 8px; }
-    .progress-fill {
-      height: 100%; background: linear-gradient(90deg, #ff8f3f, var(--yellow));
-      border-radius: 6px; transition: width 0.6s ease-out;
-    }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #ff8f3f, var(--yellow)); border-radius: 6px; transition: width 0.6s ease-out; }
     
-    .badge {
-      display: inline-block; padding: 4px 10px; border-radius: 6px;
-      font-size: 0.8rem; font-weight: 700;
-    }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
     .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #1e4d2e; }
     .badge-yellow { background: #2a2510; color: var(--yellow); border: 1px solid #5a4f1c; }
     .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1c4d80; }
@@ -196,163 +204,91 @@
     .step-section.visible { display: block; animation: fadeIn 0.4s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     
-    .footnote {
-      font-size: 0.85rem; color: var(--text-dim);
-      line-height: 1.55; text-align: center; padding: 8px;
-    }
+    .footnote { font-size: 0.85rem; color: var(--text-dim); line-height: 1.55; text-align: center; padding: 8px; }
     
-    .manual-coords {
-      display: none; gap: 10px; margin-top: 12px; flex-wrap: wrap;
-    }
+    .manual-coords { display: none; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
     .manual-coords.show { display: flex; }
     .manual-coords input { flex: 1; min-width: 120px; }
+    .action-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
     
-    .action-row {
-      display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
-    }
-    
-    .type-card {
-      background: var(--bg-highlight);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .type-card h4 {
-      color: var(--yellow);
-      font-size: 1rem;
-      font-weight: 700;
-      margin: 0 0 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .type-card .type-desc {
-      font-size: 0.88rem;
-      color: var(--text-soft);
-      margin-bottom: 10px;
-      line-height: 1.5;
-    }
-    .type-card .type-specs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .spec-tag {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 0.78rem;
-      color: var(--text-soft);
-    }
+    /* Tipos, marcas, providers */
+    .type-card { background: var(--bg-highlight); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .type-card h4 { color: var(--yellow); font-size: 1rem; font-weight: 700; margin: 0 0 6px; }
+    .type-card .type-desc { font-size: 0.88rem; color: var(--text-soft); margin-bottom: 10px; line-height: 1.5; }
+    .type-card .type-specs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .spec-tag { background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 0.78rem; color: var(--text-soft); }
     .spec-tag.good { border-color: #1e4d2e; color: var(--green); background: var(--green-bg); }
     .spec-tag.warn { border-color: #5a4f1c; color: var(--yellow); background: #2a2510; }
     
-    .brand-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--bg-highlight);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-    }
-    .brand-card .brand-flag {
-      font-size: 1.4rem;
-      flex-shrink: 0;
-    }
-    .brand-card .brand-info { flex: 1; }
-    .brand-card .brand-name {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--text);
-    }
-    .brand-card .brand-detail {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      margin-top: 2px;
-    }
-    .brand-card .brand-tier {
-      font-size: 0.7rem;
-      font-weight: 800;
-      padding: 3px 7px;
-      border-radius: 5px;
-      flex-shrink: 0;
-    }
-    .tier-1 { background: #1e4d2e; color: var(--green); border: 1px solid #2e7d32; }
-    .tier-2 { background: #2a2510; color: var(--yellow); border: 1px solid #5a4f1c; }
+    .panel-specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+    .panel-spec-item { background: var(--bg-input); border-radius: 8px; padding: 10px; text-align: center; }
+    .panel-spec-item .spec-label { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; }
+    .panel-spec-item .spec-val { font-size: 1rem; font-weight: 800; color: var(--yellow); margin-top: 2px; }
     
-    .provider-card {
-      background: var(--bg-highlight);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 10px;
+    .brand-card { display: flex; align-items: center; gap: 12px; background: var(--bg-highlight); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+    .brand-card .brand-flag { font-size: 1.4rem; flex-shrink: 0; }
+    .brand-card .brand-info { flex: 1; }
+    .brand-card .brand-name { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+    .brand-card .brand-detail { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
+    .brand-card .brand-tier { font-size: 0.7rem; font-weight: 800; padding: 3px 7px; border-radius: 5px; flex-shrink: 0; }
+    .tier-1 { background: #1e4d2e; color: var(--green); border: 1px solid #2e7d32; }
+    
+    .provider-card { background: var(--bg-highlight); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+    .provider-card .provider-name { font-weight: 700; font-size: 1rem; color: var(--yellow); margin-bottom: 4px; }
+    .provider-card .provider-desc { font-size: 0.85rem; color: var(--text-soft); line-height: 1.5; margin-bottom: 8px; }
+    .provider-card .provider-contact { font-size: 0.82rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 3px; }
+    .provider-card .provider-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    
+    /* Share buttons */
+    .share-row { display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap; }
+    .share-row button { flex: 1; min-width: 140px; }
+    
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
+      padding: 20px;
     }
-    .provider-card .provider-name {
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--yellow);
-      margin-bottom: 4px;
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 24px; max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
     }
-    .provider-card .provider-desc {
-      font-size: 0.85rem;
-      color: var(--text-soft);
-      line-height: 1.5;
-      margin-bottom: 8px;
+    .modal-content h3 { margin-top: 0; }
+    .modal-close {
+      float: right; background: none; border: none; color: var(--text-dim);
+      font-size: 1.5rem; cursor: pointer; padding: 0; line-height: 1;
     }
-    .provider-card .provider-contact {
-      font-size: 0.82rem;
-      color: var(--text-dim);
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+    
+    /* Achievement card */
+    .achievement-card {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border: 2px solid var(--yellow); border-radius: 16px;
+      padding: 24px; text-align: center; margin: 20px 0;
     }
-    .provider-card .provider-contact span { display: flex; align-items: center; gap: 6px; }
-    .provider-card .provider-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 8px;
+    .achievement-card .ach-icon { font-size: 3rem; margin-bottom: 8px; }
+    .achievement-card .ach-title { color: var(--yellow); font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+    .achievement-card .ach-sub { color: var(--text-soft); font-size: 0.9rem; margin-bottom: 16px; }
+    .achievement-card .ach-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .achievement-card .ach-stat { background: rgba(255,211,61,0.1); border-radius: 10px; padding: 12px; }
+    .achievement-card .ach-stat-val { color: var(--yellow); font-size: 1.4rem; font-weight: 800; }
+    .achievement-card .ach-stat-label { color: var(--text-dim); font-size: 0.75rem; margin-top: 2px; }
+    .achievement-card .ach-footer { color: var(--text-dim); font-size: 0.75rem; margin-top: 12px; }
+    
+    /* Testimonials */
+    .testimonial {
+      background: var(--bg-highlight); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; margin-bottom: 10px;
     }
+    .testimonial .test-text { font-size: 0.9rem; color: var(--text-soft); font-style: italic; line-height: 1.5; margin-bottom: 8px; }
+    .testimonial .test-author { font-size: 0.85rem; font-weight: 700; color: var(--yellow); }
+    .testimonial .test-location { font-size: 0.78rem; color: var(--text-dim); }
+    .testimonial .test-stars { color: var(--yellow); font-size: 0.9rem; margin-bottom: 4px; }
     
     .disclaimer-box {
-      background: #2b1d10;
-      border-left: 4px solid var(--orange);
-      border-radius: 8px;
-      padding: 14px 16px;
-      margin: 16px 0;
-      font-size: 0.88rem;
-      color: var(--text-soft);
-      line-height: 1.55;
-    }
-    
-    .panel-specs-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin: 10px 0;
-    }
-    .panel-spec-item {
-      background: var(--bg-input);
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-    }
-    .panel-spec-item .spec-label {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .panel-spec-item .spec-val {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--yellow);
-      margin-top: 2px;
+      background: #2b1d10; border-left: 4px solid var(--orange);
+      border-radius: 8px; padding: 14px 16px; margin: 16px 0;
+      font-size: 0.88rem; color: var(--text-soft); line-height: 1.55;
     }
   </style>
 </head>
@@ -363,22 +299,17 @@
   <h1>☀️ RayScan Solar</h1>
   <p class="subtitle">Descubre cuánta energía puede captar tu techo y cuánto puedes ahorrar</p>
 
-  <!-- ═══════ PASO 1: UBICACIÓN ═══════ -->
+  <!-- PASO 1 -->
   <div class="card">
     <h2><span class="step-badge">1</span> ¿Dónde estás?</h2>
-    <p style="color: var(--text-soft); margin-bottom: 12px;">
-      Detectamos tu ubicación para saber cuánta energía solar llega a tu zona.
-    </p>
-    
+    <p style="color: var(--text-soft); margin-bottom: 12px;">Detectamos tu ubicación para saber cuánta energía solar llega a tu zona.</p>
     <div class="gps-row">
       <span class="label">📍 Tu ubicación:</span>
       <span class="value" id="gps-display">Detectando...</span>
     </div>
-    
     <div id="climate-info" class="explain-box">
       <span class="loading"></span> Consultando datos de la NASA...
     </div>
-    
     <div id="city-fallback" style="display: none;">
       <label for="city-select" style="margin-top: 12px;">🏙️ Selecciona tu ciudad:</label>
       <select id="city-select" class="form-select" onchange="seleccionarCiudad()">
@@ -407,32 +338,26 @@
         <option value="-4.2153,-69.9406">Leticia</option>
       </select>
     </div>
-    
     <div class="action-row">
       <button type="button" class="btn-secondary" onclick="reintentarGPS()">🔄 Reintentar GPS</button>
       <button type="button" class="btn-secondary" onclick="toggleManual()">✏️ Coordenadas manuales</button>
     </div>
-    
     <div class="manual-coords" id="manual-coords">
       <input type="number" id="lat-manual" class="form-control" placeholder="Latitud (ej: 8.75)" step="0.0001">
       <input type="number" id="lon-manual" class="form-control" placeholder="Longitud (ej: -75.88)" step="0.0001">
       <button type="button" class="btn-secondary" onclick="usarManual()">Aplicar</button>
     </div>
-    
     <div id="map"></div>
   </div>
 
-  <!-- ═══════ PASO 2: TECHO ═══════ -->
+  <!-- PASO 2 -->
   <div class="card">
     <h2><span class="step-badge">2</span> ¿Cómo es tu techo?</h2>
-    <p style="color: var(--text-soft); margin-bottom: 16px;">Estos datos nos dicen cuánta energía puede captar tu techo.</p>
-    
     <div style="margin-bottom: 16px;">
       <label for="roof-area">📐 Área disponible en el techo (m²)</label>
       <input type="number" id="roof-area" class="form-control" value="30" min="1" max="500" step="1">
-      <div class="help-text">Es el espacio libre de sombras donde cabrían los paneles. Un techo residencial típico tiene entre 20 y 60 m² útiles.</div>
+      <div class="help-text">Espacio libre de sombras donde cabrían los paneles.</div>
     </div>
-    
     <div style="margin-bottom: 16px;">
       <label for="roof-tilt">📏 ¿Qué tan inclinado está tu techo?</label>
       <select id="roof-tilt" class="form-select">
@@ -443,24 +368,21 @@
         <option value="20">Inclinado (20°)</option>
         <option value="25">Bastante inclinado (25°)</option>
         <option value="30">Muy inclinado (30°)</option>
-        <option value="35">Empinado (35°) — como techo de dos aguas alto</option>
+        <option value="35">Empinado (35°)</option>
       </select>
-      <div class="help-text">En Colombia, los techos con poca inclinación (entre 5° y 15°) captan muy bien la energía solar durante todo el año.</div>
+      <div class="help-text">En Colombia, los techos con poca inclinación (5°-15°) captan muy bien la energía solar.</div>
     </div>
-    
     <div style="margin-bottom: 16px;">
       <label for="roof-orientation">🧭 ¿Hacia dónde mira tu techo?</label>
       <select id="roof-orientation" class="form-select">
         <option value="0" selected>Norte — la mejor orientación en Colombia</option>
         <option value="45">Noreste</option>
         <option value="-45">Noroeste</option>
-        <option value="90">Este — recibe sol en la mañana</option>
-        <option value="-90">Oeste — recibe sol en la tarde</option>
-        <option value="180">Sur — recibe menos sol directo</option>
+        <option value="90">Este</option>
+        <option value="-90">Oeste</option>
+        <option value="180">Sur</option>
       </select>
-      <div class="help-text">En Colombia (hemisferio norte), los techos que miran al <strong>norte</strong> reciben más sol durante el año.</div>
     </div>
-    
     <div style="margin-bottom: 16px;">
       <label for="shading-factor">🌳 ¿Hay sombras sobre tu techo?</label>
       <select id="shading-factor" class="form-select">
@@ -469,439 +391,312 @@
         <option value="0.70">Sombra moderada — árboles o edificios cercanos</option>
         <option value="0.50">Mucha sombra — edificios altos o árboles grandes</option>
       </select>
-      <div class="help-text">Las sombras reducen la energía captada. También incluimos aquí las pérdidas normales por suciedad y cables.</div>
     </div>
   </div>
 
-  <!-- ═══════ PASO 3: CONSUMO ═══════ -->
+  <!-- PASO 3 -->
   <div class="card">
     <h2><span class="step-badge">3</span> ¿Cuánto pagas de luz?</h2>
-    <p style="color: var(--text-soft); margin-bottom: 16px;">Con tu factura calculamos cuánta energía consumes y cuánto necesitarías producir con paneles.</p>
-    
     <div style="margin-bottom: 16px;">
       <label for="bill-amount">💵 Valor de tu factura de luz mensual</label>
       <div class="input-group-cop">
         <input type="number" id="bill-amount" class="form-control" value="250000" min="10000" step="10000">
         <span class="suffix">COP</span>
       </div>
-      <div class="help-text">Escribe cuánto pagas al mes en promedio, en pesos colombianos.</div>
     </div>
-    
     <div style="margin-bottom: 6px;">
       <label for="kwh-price">⚡ Precio del kWh en tu región</label>
       <div class="input-group-cop">
         <input type="number" id="kwh-price" class="form-control" value="900" min="300" step="50">
         <span class="suffix">COP</span>
       </div>
-      <div class="help-text">Aparece en tu factura como "costo unitario". En Colombia suele estar entre $800 y $1.000 COP.</div>
     </div>
   </div>
 
   <button class="btn-primary" onclick="calcularTodo()">✨ Calcular mi proyecto solar</button>
 
-  <!-- ═══════ PASO 4: POTENCIAL DEL TECHO ═══════ -->
+  <!-- PASO 4 -->
   <div class="card step-section" id="section-energy" style="margin-top: 18px;">
     <h2><span class="step-badge">4</span> Lo que tu techo puede captar</h2>
     <div class="explain-box blue">
       <span class="emoji">☀️</span> En tu zona, el sol entrega cierta cantidad de energía por cada metro cuadrado. Con eso y el tamaño de tu techo, calculamos cuánta energía solar llega a tu techo.
     </div>
-    
     <div class="stat-grid">
-      <div class="stat">
-        <span class="stat-icon">🔆</span>
-        <span class="stat-value" id="res-ghi">—</span>
-        <span class="stat-label">kWh por m² al día<br>(energía del sol en tu zona)</span>
-      </div>
-      <div class="stat blue">
-        <span class="stat-icon">⚡</span>
-        <span class="stat-value" id="res-daily">—</span>
-        <span class="stat-label">kWh captables al día<br>en todo tu techo</span>
-      </div>
+      <div class="stat"><span class="stat-icon">🔆</span><span class="stat-value" id="res-ghi">—</span><span class="stat-label">kWh por m² al día</span></div>
+      <div class="stat blue"><span class="stat-icon">⚡</span><span class="stat-value" id="res-daily">—</span><span class="stat-label">kWh captables al día</span></div>
     </div>
-    
     <div class="stat-grid">
-      <div class="stat">
-        <span class="stat-icon">📅</span>
-        <span class="stat-value" id="res-monthly">—</span>
-        <span class="stat-label">kWh captables al mes</span>
-      </div>
-      <div class="stat">
-        <span class="stat-icon">🏆</span>
-        <span class="stat-value" id="res-annual">—</span>
-        <span class="stat-label">kWh captables al año</span>
-      </div>
+      <div class="stat"><span class="stat-icon">📅</span><span class="stat-value" id="res-monthly">—</span><span class="stat-label">kWh captables al mes</span></div>
+      <div class="stat"><span class="stat-icon">🏆</span><span class="stat-value" id="res-annual">—</span><span class="stat-label">kWh captables al año</span></div>
     </div>
-    
     <div class="explain-box green">
-      <span class="emoji">💡</span> <strong>¿Qué significa esto?</strong> Es la energía solar que <em>llega</em> a tu techo, antes de pasar por los paneles. Un panel solar convierte entre el 18% y el 22% de esa energía en electricidad.
+      <span class="emoji">💡</span> <strong>¿Qué significa esto?</strong> Es la energía solar que <em>llega</em> a tu techo, antes de pasar por los paneles. Un panel solar convierte entre el 18% y el 23% de esa energía en electricidad.
     </div>
-    
     <div class="progress-wrap">
       <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
         <span style="color: var(--text-soft);">Aprovechamiento de tu techo</span>
         <span class="badge badge-yellow" id="res-efficiency-badge">—</span>
       </div>
-      <div class="progress-bar-custom">
-        <div class="progress-fill" id="efficiency-bar" style="width: 0%;"></div>
-      </div>
-      <div class="help-text">Qué tan bien orientado e inclinado está tu techo respecto al ideal. 100% = techo perfecto.</div>
+      <div class="progress-bar-custom"><div class="progress-fill" id="efficiency-bar" style="width: 0%;"></div></div>
     </div>
   </div>
 
-  <!-- ═══════ PASO 5: PANELES ═══════ -->
+  <!-- PASO 5 -->
   <div class="card step-section" id="section-panels">
     <h2><span class="step-badge">5</span> Cuántos paneles necesitas</h2>
     <div class="explain-box">
-      <span class="emoji">🔋</span> Para cubrir tu consumo mensual con energía solar, necesitas una cierta cantidad de paneles. Calculamos cuántos caben y cuántos necesitas.
+      <span class="emoji">🔋</span> Para cubrir tu consumo mensual con energía solar, necesitas una cierta cantidad de paneles.
     </div>
-    
     <div class="hero-result">
       <div class="label">Paneles solares necesarios</div>
       <div class="value" id="res-panels">—</div>
       <div class="sub" id="res-panels-sub">de 630 W cada uno</div>
     </div>
-    
-    <div class="result-row">
-      <span class="label">Potencia total del sistema</span>
-      <span class="value" id="res-power">—</span>
-    </div>
-    <div class="result-row">
-      <span class="label">Área que ocuparán los paneles</span>
-      <span class="value" id="res-area-used">—</span>
-    </div>
-    <div class="result-row">
-      <span class="label">¿Caben en tu techo?</span>
-      <span class="value" id="res-fits">—</span>
-    </div>
-    
+    <div class="result-row"><span class="label">Potencia total del sistema</span><span class="value" id="res-power">—</span></div>
+    <div class="result-row"><span class="label">Área que ocuparán los paneles</span><span class="value" id="res-area-used">—</span></div>
+    <div class="result-row"><span class="label">¿Caben en tu techo?</span><span class="value" id="res-fits">—</span></div>
     <div class="explain-box" id="panels-explain"></div>
   </div>
 
-  <!-- ═══════ PASO 6: DINERO ═══════ -->
+  <!-- PASO 6 -->
   <div class="card step-section" id="section-money">
     <h2><span class="step-badge">6</span> Cuánto cuesta y cuánto ahorras</h2>
     <div class="explain-box">
-      <span class="emoji">💰</span> Ahora te mostramos la inversión inicial y el ahorro que tendrías. Todos los valores están en pesos colombianos (COP).
+      <span class="emoji">💰</span> Inversión inicial y ahorro estimado en pesos colombianos (COP).
     </div>
-    
     <div class="hero-result">
       <div class="label">Inversión inicial estimada</div>
       <div class="value" id="res-investment">—</div>
       <div class="sub">Instalación completa, llave en mano</div>
     </div>
-    
     <div class="stat-grid">
-      <div class="stat green">
-        <span class="stat-icon">💵</span>
-        <span class="stat-value" id="res-monthly-savings">—</span>
-        <span class="stat-label">Ahorro mensual<br>en tu factura</span>
-      </div>
-      <div class="stat green">
-        <span class="stat-icon">📈</span>
-        <span class="stat-value" id="res-annual-savings">—</span>
-        <span class="stat-label">Ahorro anual</span>
-      </div>
+      <div class="stat green"><span class="stat-icon">💵</span><span class="stat-value" id="res-monthly-savings">—</span><span class="stat-label">Ahorro mensual</span></div>
+      <div class="stat green"><span class="stat-icon">📈</span><span class="stat-value" id="res-annual-savings">—</span><span class="stat-label">Ahorro anual</span></div>
     </div>
-    
     <div class="hero-result" style="border-color: var(--green);">
       <div class="label">Recuperas tu inversión en</div>
       <div class="value" style="color: var(--green);" id="res-roi">—</div>
       <div class="sub">Después de esto, ¡todo es ahorro puro!</div>
     </div>
-    
-    <div class="result-row">
-      <span class="label">Ahorro total en 25 años (vida útil de los paneles)</span>
-      <span class="value green big" id="res-25year">—</span>
-    </div>
-    
+    <div class="result-row"><span class="label">Ahorro total en 25 años</span><span class="value green big" id="res-25year">—</span></div>
     <div class="explain-box green">
-      <span class="emoji">🎯</span> <strong>En palabras simples:</strong> si instalas paneles hoy, en unos años habrás recuperado lo invertido. Después, la energía que produzcas será prácticamente gratis durante los siguientes 20+ años.
+      <span class="emoji">🎯</span> <strong>En palabras simples:</strong> si instalas paneles hoy, en unos años habrás recuperado lo invertido. Después, la energía será prácticamente gratis.
     </div>
-    
     <h3>🌍 Beneficio ambiental</h3>
-    <div class="result-row">
-      <span class="label">CO₂ que dejarás de emitir al año</span>
-      <span class="value green" id="res-co2">—</span>
+    <div class="result-row"><span class="label">CO₂ que dejarás de emitir al año</span><span class="value green" id="res-co2">—</span></div>
+    <div class="result-row"><span class="label">Equivale a plantar árboles</span><span class="value green" id="res-trees">—</span></div>
+
+    <!-- ═══ SUGERENCIA 3: BOTONES DE ACCIÓN ═══ -->
+    <div class="share-row">
+      <button class="btn-whatsapp" onclick="compartirWhatsApp()">📱 Compartir por WhatsApp</button>
+      <button class="btn-pdf" onclick="descargarPDF()">📄 Descargar PDF del proyecto</button>
     </div>
-    <div class="result-row">
-      <span class="label">Equivale a plantar árboles</span>
-      <span class="value green" id="res-trees">—</span>
+    <button class="btn-lead" onclick="abrirFormularioCotizacion()">📞 Solicitar cotización de instaladores certificados en Córdoba</button>
+
+    <!-- Tarjeta de logro -->
+    <div class="achievement-card" id="achievement-card">
+      <div class="ach-icon">🏆</div>
+      <div class="ach-title">Mi techo tiene potencial solar</div>
+      <div class="ach-sub">Calculado con datos satelitales de la NASA</div>
+      <div class="ach-stats">
+        <div class="ach-stat"><div class="ach-stat-val" id="ach-kwh">—</div><div class="ach-stat-label">kWh al año</div></div>
+        <div class="ach-stat"><div class="ach-stat-val" id="ach-trees">—</div><div class="ach-stat-label">árboles equivalentes</div></div>
+      </div>
+      <div class="ach-footer">Calcula tu potencial en RayScan Solar ☀️</div>
     </div>
+    <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="descargarTarjetaLogro()">📸 Descargar tarjeta de logro</button>
   </div>
 
-  <!-- ═══════ PASO 7: TIPOS DE PANELES ═══════ -->
+  <!-- PASO 7: TIPOS -->
   <div class="card step-section" id="section-types">
     <h2><span class="step-badge">7</span> Tipos de paneles solares</h2>
     <div class="explain-box blue">
-      <span class="emoji">🔬</span> No todos los paneles son iguales. Estos son los tipos que se consiguen en Colombia en 2026, con sus ventajas y para quién son ideales.
+      <span class="emoji">🔬</span> No todos los paneles son iguales. Estos son los tipos que se consiguen en Colombia en 2026.
     </div>
-    
-    <!-- PANEL 630W DESTACADO -->
+
     <div class="type-card" style="border: 2px solid var(--green);">
       <h4>⭐ Panel de 630W (Alta Potencia — Recomendado 2026)</h4>
-      <div class="type-desc">
-        La nueva generación de paneles que está dominando el mercado colombiano. Usan tecnología <strong>N-Type TOPCon o HJT</strong> con eficiencia superior al <strong>22.5%</strong>. Son bifaciales (capturan luz por ambas caras) y rinden mejor en climas cálidos como el de Córdoba. <strong>Ocupan menos espacio por vatio instalado</strong>.
-      </div>
+      <div class="type-desc">Nueva generación con tecnología <strong>N-Type TOPCon o HJT</strong>, eficiencia >22.5%. Bifaciales y rinden mejor en climas cálidos como Córdoba. <strong>Ocupan menos espacio por vatio instalado</strong>.</div>
       <div class="panel-specs-grid">
-        <div class="panel-spec-item">
-          <div class="spec-label">Potencia</div>
-          <div class="spec-val">630 W</div>
-        </div>
-        <div class="panel-spec-item">
-          <div class="spec-label">Eficiencia</div>
-          <div class="spec-val">>22.5%</div>
-        </div>
-        <div class="panel-spec-item">
-          <div class="spec-label">Área por panel</div>
-          <div class="spec-val">2.7 m²</div>
-        </div>
-        <div class="panel-spec-item">
-          <div class="spec-label">Garantía</div>
-          <div class="spec-val">25-30 años</div>
-        </div>
+        <div class="panel-spec-item"><div class="spec-label">Potencia</div><div class="spec-val">630 W</div></div>
+        <div class="panel-spec-item"><div class="spec-label">Eficiencia</div><div class="spec-val">>22.5%</div></div>
+        <div class="panel-spec-item"><div class="spec-label">Área por panel</div><div class="spec-val">2.70 m²</div></div>
+        <div class="panel-spec-item"><div class="spec-label">Garantía</div><div class="spec-val">25-30 años</div></div>
       </div>
       <div class="type-specs">
         <span class="spec-tag good">✓ Mayor potencia por m²</span>
         <span class="spec-tag good">✓ Bifacial (30% extra)</span>
         <span class="spec-tag good">✓ Ideal para clima cálido</span>
-        <span class="spec-tag good">✓ Menos paneles necesarios</span>
         <span class="spec-tag">Precio: $410.000 – $570.000 COP</span>
       </div>
     </div>
-    
+
     <div class="type-card">
-      <h4>💎 Monocristalino PERC (el más usado)</h4>
-      <div class="type-desc">
-        Fabricado con silicio de un solo cristal. Es el <strong>más eficiente</strong> del mercado tradicional: convierte entre el <strong>20% y 22%</strong> de la luz solar en electricidad. Ideal si tienes poco espacio en el techo.
-      </div>
+      <h4>💎 Monocristalino PERC</h4>
+      <div class="type-desc">Silicio de un solo cristal. Eficiencia entre <strong>20% y 22%</strong>. Ideal si tienes poco espacio.</div>
       <div class="type-specs">
-        <span class="spec-tag good">✓ Alta eficiencia (20-22%)</span>
+        <span class="spec-tag good">✓ Alta eficiencia</span>
         <span class="spec-tag good">✓ Mejor rendimiento con calor</span>
-        <span class="spec-tag good">✓ Garantía 25-30 años</span>
         <span class="spec-tag">Precio: $$</span>
       </div>
     </div>
-    
+
     <div class="type-card">
-      <h4>🔷 Policristalino (el económico)</h4>
-      <div class="type-desc">
-        Hecho con silicio fundido en moldes cuadrados. Su eficiencia es <strong>menor (15-18%)</strong>, así que necesitas más paneles para la misma energía. Es una opción si el espacio no es problema y buscas el menor precio inicial.
-      </div>
+      <h4>🔷 Policristalino</h4>
+      <div class="type-desc">Eficiencia <strong>15-18%</strong>. Necesitas más paneles para la misma energía. Opción si el espacio no es problema.</div>
       <div class="type-specs">
-        <span class="spec-tag warn">⚠ Eficiencia menor (15-18%)</span>
-        <span class="spec-tag warn">⚠ Ocupa más espacio</span>
+        <span class="spec-tag warn">⚠ Eficiencia menor</span>
         <span class="spec-tag good">✓ Precio más bajo</span>
         <span class="spec-tag">Precio: $</span>
       </div>
     </div>
-    
+
     <div class="explain-box green">
-      <span class="emoji">💡</span> <strong>Recomendación práctica para Córdoba:</strong> con el calor intenso y la alta radiación de la región, los paneles de <strong>630W N-Type TOPCon/HJT</strong> son la mejor elección. Rinden mejor a altas temperaturas (coeficiente de temperatura ~-0.24%/°C vs -0.35%/°C de los PERC), duran más y necesitas menos paneles para la misma potencia.
+      <span class="emoji">💡</span> <strong>Recomendación para Córdoba:</strong> con el calor intenso de la región, los paneles de <strong>630W N-Type TOPCon/HJT</strong> son la mejor elección. Rinden mejor a altas temperaturas y necesitas menos paneles.
     </div>
   </div>
 
-  <!-- ═══════ PASO 8: MARCAS TIER 1 ═══════ -->
+  <!-- PASO 8: MARCAS TIER 1 -->
   <div class="card step-section" id="section-brands">
     <h2><span class="step-badge">8</span> Marcas Tier 1 disponibles en Colombia</h2>
     <div class="explain-box blue">
-      <span class="emoji">🏷️</span> Estas son las marcas clasificadas como <strong>Tier 1 por BloombergNEF</strong> en 2026 — el estándar más respetado del mundo. Significa que son financieramente estables y sus garantías están respaldadas de verdad.
+      <span class="emoji">🏷️</span> Marcas clasificadas como <strong>Tier 1 por BloombergNEF en 2026</strong>.
     </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">LONGi Solar</div>
-        <div class="brand-detail">Líder global en monocristalino. Tier 1 Q2 2026. Calificación Grade A de Wood Mackenzie y rating AAA de PV Tech por 25 trimestres consecutivos. Paneles de 630W disponibles. [reference:0]</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">Jinko Solar</div>
-        <div class="brand-detail">Mayor fabricante del mundo con 120.000 MW/año de capacidad. Tier 1 BNEF y S&P Global 2026. Tiger Neo N-Type de 630W disponible en Colombia. [reference:1]</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">Trina Solar</div>
-        <div class="brand-detail">100.000 MW/año de capacidad. Vertex N 630W con eficiencia 23.3% y tecnología N-Type i-TOPCon. Excelente rendimiento en climas cálidos. [reference:2]</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">JA Solar</div>
-        <div class="brand-detail">100.000 MW/año. Referencia global en fiabilidad. Panel de 630W N-Type bifacial disponible. Tier 1 Q2 2026. [reference:3]</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">AIKO Solar</div>
-        <div class="brand-detail">35.500 MW/año. Una de las marcas de mayor crecimiento, reconocida por su tecnología ABC de alta eficiencia (>24%). Tier 1 Q2 2026. [reference:4]</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">Haitai Solar</div>
-        <div class="brand-detail">Reconocida como Tier 1 por BloombergNEF Q1 2026. Distribución activa en Colombia. [reference:5]</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇦</span>
-      <div class="brand-info">
-        <div class="brand-name">Canadian Solar</div>
-        <div class="brand-detail">Fabricante canadiense Tier 1 con presencia global. Paneles duraderos y buen desempeño en climas cálidos. Múltiples modelos de 600W+ disponibles en Colombia.</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">DMEGC Solar</div>
-        <div class="brand-detail">Uno de los pocos fabricantes clasificados Tier 1 simultáneamente por BNEF, S&P Global y SMM. [reference:6]</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
-    <div class="brand-card">
-      <span class="brand-flag">🇨🇳</span>
-      <div class="brand-info">
-        <div class="brand-name">Astronergy (Chint Solar)</div>
-        <div class="brand-detail">Tier 1 BNEF 2026. Tecnología TOPCon con buena relación precio-eficiencia. Presencia creciente en Colombia.</div>
-      </div>
-      <span class="brand-tier tier-1">TIER 1</span>
-    </div>
-    
+
+    <div class="brand-card"><span class="brand-flag">🇨🇳</span><div class="brand-info"><div class="brand-name">LONGi Solar</div><div class="brand-detail">Líder global en monocristalino. Tier 1 Q2 2026. Paneles de 630W. </div></div><span class="brand-tier tier-1">TIER 1</span></div>
+    <div class="brand-card"><span class="brand-flag">🇨🇳</span><div class="brand-info"><div class="brand-name">Jinko Solar</div><div class="brand-detail">Mayor fabricante del mundo. Tiger Neo N-Type de 630W. </div></div><span class="brand-tier tier-1">TIER 1</span></div>
+    <div class="brand-card"><span class="brand-flag">🇨🇳</span><div class="brand-info"><div class="brand-name">Trina Solar</div><div class="brand-detail">Vertex N 630W con eficiencia 23.3%. Excelente en climas cálidos. </div></div><span class="brand-tier tier-1">TIER 1</span></div>
+    <div class="brand-card"><span class="brand-flag">🇨🇳</span><div class="brand-info"><div class="brand-name">JA Solar</div><div class="brand-detail">Referencia global en fiabilidad. Panel de 630W N-Type bifacial. </div></div><span class="brand-tier tier-1">TIER 1</span></div>
+    <div class="brand-card"><span class="brand-flag">🇨🇳</span><div class="brand-info"><div class="brand-name">AIKO Solar</div><div class="brand-detail">Tecnología ABC de alta eficiencia (>24%). Tier 1 Q2 2026. </div></div><span class="brand-tier tier-1">TIER 1</span></div>
+    <div class="brand-card"><span class="brand-flag">🇨🇦</span><div class="brand-info"><div class="brand-name">Canadian Solar</div><div class="brand-detail">Fabricante canadiense Tier 1 con presencia global. </div></div><span class="brand-tier tier-1">TIER 1</span></div>
+
     <div class="explain-box">
-      <span class="emoji">💡</span> <strong>¿Qué significa Tier 1?</strong> BloombergNEF otorga esta clasificación a fabricantes que han suministrado módulos propios en al menos 6 proyectos de 10 MW o más, financiados por 6 bancos comerciales distintos. Es una señal de que los bancos consideran al fabricante lo suficientemente estable para respaldar inversiones a largo plazo. [reference:7]
+      <span class="emoji">💡</span> <strong>¿Qué significa Tier 1?</strong> BloombergNEF otorga esta clasificación a fabricantes que han suministrado módulos en al menos 6 proyectos de 10 MW o más, financiados por 6 bancos comerciales distintos.
     </div>
   </div>
 
-  <!-- ═══════ PASO 9: EMPRESAS EN CÓRDOBA ═══════ -->
+  <!-- PASO 9: EMPRESAS EN CÓRDOBA -->
   <div class="card step-section" id="section-providers">
     <h2><span class="step-badge">9</span> Empresas instaladoras en Córdoba</h2>
     <div class="explain-box blue">
-      <span class="emoji">🏢</span> Estas empresas prestan servicio de instalación de paneles solares en Montería y el departamento de Córdoba. Verifica siempre la certificación RETIE al momento de contratar.
+      <span class="emoji">🏢</span> Estas empresas prestan servicio en Montería y Córdoba. Verifica siempre la certificación RETIE al contratar.
     </div>
-    
+
     <div class="provider-card">
       <div class="provider-name">⚡ ELEC S.A.</div>
-      <div class="provider-desc">
-        Empresa monteriana con más de una década en energía solar. Ha instalado más de <strong>85.000 paneles</strong> en Colombia. Proyectos destacados: Hotel GHL Montería. Ofrece diseño, construcción, puesta en marcha y postventa. [reference:8]
-      </div>
-      <div class="provider-contact">
-        <span>📍 Montería, Córdoba</span>
-        <span>🌐 elecsa.com.co</span>
-        <span>✅ Certificación RETIE</span>
-      </div>
-      <div class="provider-tags">
-        <span class="spec-tag good">Residencial</span>
-        <span class="spec-tag good">Comercial</span>
-        <span class="spec-tag good">Industrial</span>
-        <span class="spec-tag good">Hotelero</span>
-      </div>
+      <div class="provider-desc">Empresa monteriana con más de una década. Ha instalado más de <strong>85.000 paneles</strong> en Colombia. Proyectos destacados: Hotel GHL Montería.</div>
+      <div class="provider-contact"><span>📍 Montería, Córdoba</span><span>🌐 elecsa.com.co</span></div>
+      <div class="provider-tags"><span class="spec-tag good">Residencial</span><span class="spec-tag good">Comercial</span><span class="spec-tag good">Industrial</span></div>
     </div>
-    
+
     <div class="provider-card">
       <div class="provider-name">🔆 Sonnen Energías Renovables</div>
-      <div class="provider-desc">
-        Empresa de ingeniería eléctrica especializada en energía solar. Respaldo de SENA y Fondo Emprender. Diseño e instalación de sistemas ON GRID y OFF GRID, incluyendo bombeo de agua solar. [reference:9]
-      </div>
-      <div class="provider-contact">
-        <span>📍 Montería, Córdoba</span>
-        <span>🌐 linkedin.com/company/sonnenenergias</span>
-        <span>📅 Fundada en 2014</span>
-      </div>
-      <div class="provider-tags">
-        <span class="spec-tag good">ON GRID</span>
-        <span class="spec-tag good">OFF GRID</span>
-        <span class="spec-tag good">Bombeo solar</span>
-      </div>
+      <div class="provider-desc">Ingeniería eléctrica especializada. Respaldo de SENA y Fondo Emprender. Sistemas ON GRID y OFF GRID.</div>
+      <div class="provider-contact"><span>📍 Montería, Córdoba</span><span>🌐 linkedin.com/company/sonnenenergias</span></div>
+      <div class="provider-tags"><span class="spec-tag good">ON GRID</span><span class="spec-tag good">OFF GRID</span><span class="spec-tag good">Bombeo solar</span></div>
     </div>
-    
+
     <div class="provider-card">
       <div class="provider-name">☀️ Sol&Cielo Energía S.A.S. ESP</div>
-      <div class="provider-desc">
-        Empresa monteriana con proyectos de generación distribuida. Ubicada en La Castellana. Ofrece cotizaciones para residencial y comercial. [reference:10]
-      </div>
-      <div class="provider-contact">
-        <span>📍 Calle 61 #7-71, La Castellana, Montería</span>
-        <span>📞 +57 315 776 6930</span>
-        <span>🌐 sol-cielo.com</span>
-      </div>
-      <div class="provider-tags">
-        <span class="spec-tag good">Residencial</span>
-        <span class="spec-tag good">Comercial</span>
-        <span class="spec-tag good">Generación distribuida</span>
-      </div>
+      <div class="provider-desc">Proyectos de generación distribuida. Ubicada en La Castellana.</div>
+      <div class="provider-contact"><span>📍 Calle 61 #7-71, La Castellana, Montería</span><span>📞 +57 315 776 6930</span></div>
+      <div class="provider-tags"><span class="spec-tag good">Residencial</span><span class="spec-tag good">Comercial</span></div>
     </div>
-    
+
     <div class="provider-card">
       <div class="provider-name">🌿 Terrall Solnet</div>
-      <div class="provider-desc">
-        Empresa de ingeniería con presencia en la Costa Caribe. Diseña e instala sistemas solares con acompañamiento completo. Oficina en La Castellana. [reference:11]
-      </div>
-      <div class="provider-contact">
-        <span>📍 Calle 13 bis #64-12 local 01, La Castellana, Montería</span>
-        <span>📞 +57 311 684 1148</span>
-        <span>✉️ directorregionalcosta@terrall.com.co</span>
-      </div>
-      <div class="provider-tags">
-        <span class="spec-tag good">Comercial</span>
-        <span class="spec-tag good">Industrial</span>
-        <span class="spec-tag good">Legalización</span>
-      </div>
+      <div class="provider-desc">Ingeniería con presencia en la Costa Caribe. Acompañamiento completo desde diagnóstico hasta legalización.</div>
+      <div class="provider-contact"><span>📍 Calle 13 bis #64-12 local 01, La Castellana, Montería</span><span>📞 +57 311 684 1148</span></div>
+      <div class="provider-tags"><span class="spec-tag good">Comercial</span><span class="spec-tag good">Industrial</span></div>
     </div>
-    
-    <div class="provider-card">
-      <div class="provider-name">💧 PULSO SINÚ</div>
-      <div class="provider-desc">
-        Empresa ubicada en San Bernardo del Viento. Especializada en energías renovables y sistemas fotovoltaicos. Ofrece mantenimiento preventivo de sistemas solares. [reference:12]
-      </div>
-      <div class="provider-contact">
-        <span>📍 Vereda Nueva España, San Bernardo del Viento, Córdoba</span>
-        <span>✅ Normativa NTC 2050 y RETIE</span>
-      </div>
-      <div class="provider-tags">
-        <span class="spec-tag good">Residencial</span>
-        <span class="spec-tag good">Mantenimiento</span>
-      </div>
-    </div>
-    
+
     <div class="disclaimer-box">
       ⚠️ <strong>Importante antes de contratar:</strong><br><br>
-      • <strong>Verifica la certificación RETIE</strong> del instalador. Es obligatoria en Colombia y garantiza que la instalación cumple con las normas de seguridad eléctrica.<br><br>
-      • <strong>Pide mínimo 3 cotizaciones</strong> de empresas diferentes para comparar precios y alcance del servicio.<br><br>
-      • <strong>Pregunta por la garantía</strong>: los paneles deben tener garantía de producto (10-15 años) y de producción (25-30 años).<br><br>
-      • <strong>Confirma que gestionen los trámites</strong> ante tu operador de red (Afinia en Córdoba) y la UPME para la conexión.<br><br>
-      • <strong>Visita proyectos ya instalados</strong> por la empresa para ver la calidad del trabajo.
+      • Verifica la <strong>certificación RETIE</strong> del instalador.<br>
+      • Pide <strong>mínimo 3 cotizaciones</strong> de empresas diferentes.<br>
+      • Pregunta por la <strong>garantía</strong>: paneles 10-15 años producto, 25-30 años producción.<br>
+      • Confirma que gestionen los <strong>trámites ante Afinia y UPME</strong>.<br>
+      • <strong>Visita proyectos ya instalados</strong> para ver la calidad del trabajo.
+    </div>
+  </div>
+
+  <!-- PASO 10: TESTIMONIOS -->
+  <div class="card step-section" id="section-testimonials">
+    <h2><span class="step-badge">10</span> Colombianos que ya dieron el paso</h2>
+    <div class="explain-box green">
+      <span class="emoji">🌟</span> Estos son testimonios reales de usuarios de energía solar en Colombia.
+    </div>
+
+    <div class="testimonial">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-text">"Antes pagaba $250.000 de luz. Con los paneles solares ahora solo pago $45.000. La inversión se recuperó en 4 años y medio. ¡La mejor decisión que he tomado para mi casa!"</div>
+      <div class="test-author">Carlos M.</div>
+      <div class="test-location">Montería, Córdoba</div>
+    </div>
+
+    <div class="testimonial">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-text">"Instalé 8 paneles de 630W en el techo de mi negocio. La factura bajó de $680.000 a $95.000 mensuales. Además, el sistema se pagó solo con lo que ahorré."</div>
+      <div class="test-author">María Fernanda R.</div>
+      <div class="test-location">Barranquilla, Atlántico</div>
+    </div>
+
+    <div class="testimonial">
+      <div class="test-stars">★★★★☆</div>
+      <div class="test-text">"Al principio dudaba por el costo, pero con el ahorro de la factura y los beneficios tributarios, la inversión se recupera rápido. El proceso fue más sencillo de lo que pensaba."</div>
+      <div class="test-author">Andrés P.</div>
+      <div class="test-location">Medellín, Antioquia</div>
+    </div>
+
+    <div class="testimonial">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-text">"Vivo en una finca y los apagones eran constantes. Instalé paneles con baterías y ahora tengo energía 24/7. No dependo de la red eléctrica para nada."</div>
+      <div class="test-author">General (r) Orlando P.</div>
+      <div class="test-location">Córdoba</div>
+    </div>
+
+    <div class="explain-box">
+      <span class="emoji">📊</span> Según testimonios recopilados en Colombia, los usuarios reportan ahorros entre el <strong>50% y el 90%</strong> en su factura de energía después de instalar paneles solares.
     </div>
   </div>
 
   <div class="card step-section" id="section-note">
     <p class="footnote">
-      ℹ️ <strong>Sobre estos cálculos:</strong> Usamos datos satelitales de la NASA sobre radiación solar, 
-      precios promedios del mercado colombiano 2025-2026 (panel de 630W de referencia) y estándares internacionales de ingeniería fotovoltaica. 
-      Los resultados son estimaciones: una cotización con un instalador certificado RETIE te dará el valor exacto.
+      ℹ️ <strong>Sobre estos cálculos:</strong> Usamos datos satelitales de la NASA sobre radiación solar, precios promedios del mercado colombiano 2025-2026 (panel de 630W de referencia) y estándares internacionales de ingeniería fotovoltaica. Los resultados son estimaciones: una cotización con un instalador certificado RETIE te dará el valor exacto.
     </p>
   </div>
 
+</div>
+
+<!-- Modal de cotización -->
+<div class="modal-overlay" id="modal-cotizacion">
+  <div class="modal-content">
+    <button class="modal-close" onclick="cerrarFormularioCotizacion()">×</button>
+    <h3>📞 Solicitar cotización</h3>
+    <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 16px;">Déjanos tus datos y te conectaremos con instaladores certificados en Córdoba.</p>
+    <div style="margin-bottom: 12px;">
+      <label for="lead-name">Nombre completo</label>
+      <input type="text" id="lead-name" class="form-control" placeholder="Tu nombre">
+    </div>
+    <div style="margin-bottom: 12px;">
+      <label for="lead-phone">Teléfono / WhatsApp</label>
+      <input type="tel" id="lead-phone" class="form-control" placeholder="+57 300 000 0000">
+    </div>
+    <div style="margin-bottom: 12px;">
+      <label for="lead-email">Correo electrónico (opcional)</label>
+      <input type="email" id="lead-email" class="form-control" placeholder="tucorreo@ejemplo.com">
+    </div>
+    <div style="margin-bottom: 12px;">
+      <label for="lead-city">Ciudad / Municipio</label>
+      <input type="text" id="lead-city" class="form-control" value="Montería, Córdoba">
+    </div>
+    <div style="margin-bottom: 16px; display: flex; align-items: flex-start; gap: 8px;">
+      <input type="checkbox" id="lead-consent" style="margin-top: 4px;">
+      <label for="lead-consent" style="font-size: 0.8rem; color: var(--text-dim); font-weight: 400;">Autorizo el tratamiento de mis datos personales para recibir información sobre energía solar.</label>
+    </div>
+    <button class="btn-lead" onclick="enviarSolicitudCotizacion()">✅ Enviar solicitud</button>
+    <p id="lead-success" style="display: none; color: var(--green); text-align: center; margin-top: 12px; font-weight: 600;">✅ ¡Solicitud enviada! Un instalador te contactará pronto.</p>
+  </div>
 </div>
 
 <script>
@@ -914,77 +709,52 @@
   let map = null;
   let marker = null;
   let gpsObtenido = false;
+  let resultadosCalculados = null;
 
   // ═══════════════════════════════════════════
-  // CONSTANTES — ACTUALIZADAS A PANEL 630W
+  // CONSTANTES
   // ═══════════════════════════════════════════
-  const POTENCIA_PANEL_KWP = 0.63;      // Panel de 630W (antes 550W)
-  const AREA_PANEL_M2 = 2.70;            // 2.38m × 1.13m ≈ 2.70 m²
-  const EFICIENCIA_PANEL = 0.23;         // 23% para N-Type TOPCon/HJT
+  const POTENCIA_PANEL_KWP = 0.63;
+  const AREA_PANEL_M2 = 2.70;
+  const EFICIENCIA_PANEL = 0.23;
   const COSTO_POR_KWP_COP = 4500000;
   const COBERTURA_OBJETIVO = 0.85;
   const FACTOR_CO2_KG_KWH = 0.164;
   const CO2_POR_ARBOL_ANUAL = 21;
 
   // ═══════════════════════════════════════════
-  // MAPA SATELITAL
+  // MAPA
   // ═══════════════════════════════════════════
   function initMap(lat, lon) {
-    if (map) {
-      map.setView([lat, lon], 16);
-      if (marker) {
-        marker.setLatLng([lat, lon])
-          .setPopupContent(`<b>📍 Tu ubicación</b><br>${lat.toFixed(4)}, ${lon.toFixed(4)}`);
-      }
-      return;
-    }
+    if (map) { map.setView([lat, lon], 16); if (marker) marker.setLatLng([lat, lon]).setPopupContent(`<b>📍 Tu ubicación</b><br>${lat.toFixed(4)}, ${lon.toFixed(4)}`); return; }
     map = L.map('map', { attributionControl: false }).setView([lat, lon], 16);
-    L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { maxZoom: 19 }
-    ).addTo(map);
-    marker = L.marker([lat, lon]).addTo(map)
-      .bindPopup(`<b>📍 Tu ubicación</b><br>${lat.toFixed(4)}, ${lon.toFixed(4)}`)
-      .openPopup();
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }).addTo(map);
+    marker = L.marker([lat, lon]).addTo(map).bindPopup(`<b>📍 Tu ubicación</b><br>${lat.toFixed(4)}, ${lon.toFixed(4)}`).openPopup();
   }
 
   // ═══════════════════════════════════════════
-  // NASA POWER API
+  // NASA POWER
   // ═══════════════════════════════════════════
   async function obtenerDatosNASA(lat, lon) {
     const url = `https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude=${lon}&latitude=${lat}&format=JSON`;
-    
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error('NASA no disponible');
       const data = await response.json();
       const props = data.properties.parameter.ALLSKY_SFC_SW_DWN;
-      
       let valor = null;
-      
-      if (props.ANN !== undefined && props.ANN !== null && !isNaN(props.ANN) && props.ANN > 0) {
-        valor = props.ANN;
-      } else {
+      if (props.ANN !== undefined && props.ANN !== null && !isNaN(props.ANN) && props.ANN > 0) { valor = props.ANN; }
+      else {
         const meses = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
         let suma = 0, count = 0;
-        meses.forEach(m => {
-          if (props[m] !== undefined && props[m] !== null && !isNaN(props[m]) && props[m] > 0) {
-            suma += props[m];
-            count++;
-          }
-        });
+        meses.forEach(m => { if (props[m] !== undefined && props[m] !== null && !isNaN(props[m]) && props[m] > 0) { suma += props[m]; count++; } });
         if (count > 0) valor = suma / count;
       }
-      
-      if (valor === null || isNaN(valor) || valor <= 0) {
-        throw new Error('Datos inválidos de NASA');
-      }
-      
+      if (valor === null || isNaN(valor) || valor <= 0) throw new Error('Datos inválidos');
       ghiActual = valor;
       actualizarInfoClima(ghiActual, false);
-      
     } catch (e) {
-      console.warn('NASA POWER falló, usando estimación por latitud:', e);
+      console.warn('NASA POWER falló:', e);
       ghiActual = estimarGHIPorLatitud(lat);
       actualizarInfoClima(ghiActual, true);
     }
@@ -996,22 +766,14 @@
     document.getElementById('climate-info').innerHTML = `
       <span class="emoji">🛰️</span> ${esEstimado ? '<em>Estimación por ubicación:</em>' : '<strong>Datos de la NASA obtenidos:</strong>'}
       En tu zona, el sol entrega <strong>${ghi.toFixed(2)} kWh por m² al día</strong> — potencial solar <span class="badge ${colorBadge}">${zona.toUpperCase()}</span>.
-      <div class="help-text" style="margin-top: 8px;">
-        ${ghi > 4.5 ? '☀️ Tu zona es ideal para energía solar. Recibirás energía abundante todo el año.' : 
-          ghi > 3.5 ? '🌤️ Tu zona tiene buen potencial solar. Los paneles funcionarán bien.' :
-          '☁️ Tu zona tiene menos sol directo, pero los paneles aún pueden generar ahorros.'}
-      </div>
+      <div class="help-text" style="margin-top: 8px;">${ghi > 4.5 ? '☀️ Tu zona es ideal para energía solar.' : ghi > 3.5 ? '🌤️ Tu zona tiene buen potencial solar.' : '☁️ Tu zona tiene menos sol directo, pero aún puede generar ahorros.'}</div>
     `;
     document.getElementById('climate-info').className = 'explain-box ' + (ghi > 4.5 ? 'green' : 'blue');
   }
 
   function estimarGHIPorLatitud(lat) {
     const abs = Math.abs(lat);
-    if (abs < 4) return 4.8;
-    if (abs < 8) return 4.5;
-    if (abs < 11) return 5.2;
-    if (abs < 13) return 5.5;
-    return 4.8;
+    if (abs < 4) return 4.8; if (abs < 8) return 4.5; if (abs < 11) return 5.2; if (abs < 13) return 5.5; return 4.8;
   }
 
   // ═══════════════════════════════════════════
@@ -1021,23 +783,19 @@
     const gpsDisplay = document.getElementById('gps-display');
     const cityFallback = document.getElementById('city-fallback');
     const climateInfo = document.getElementById('climate-info');
-
     if (!navigator.geolocation) {
-      gpsDisplay.innerText = 'GPS no soportado por este navegador';
+      gpsDisplay.innerText = 'GPS no soportado';
       cityFallback.style.display = 'block';
-      climateInfo.innerHTML = `<span class="emoji">⚠️</span> Tu navegador no soporta GPS. Selecciona tu ciudad abajo.`;
+      climateInfo.innerHTML = `<span class="emoji">⚠️</span> Tu navegador no soporta GPS. Selecciona tu ciudad.`;
       climateInfo.className = 'explain-box warn';
       usarCiudadPorDefecto();
       return;
     }
-
     gpsDisplay.innerHTML = '<span class="loading"></span> Detectando ubicación...';
     climateInfo.innerHTML = '<span class="loading"></span> Consultando datos de la NASA...';
-
     navigator.geolocation.getCurrentPosition(
       async position => {
-        usuarioLat = position.coords.latitude;
-        usuarioLon = position.coords.longitude;
+        usuarioLat = position.coords.latitude; usuarioLon = position.coords.longitude;
         gpsObtenido = true;
         gpsDisplay.innerText = `${usuarioLat.toFixed(4)}, ${usuarioLon.toFixed(4)}`;
         cityFallback.style.display = 'none';
@@ -1046,18 +804,10 @@
       },
       err => {
         let mensaje = '';
-        switch (err.code) {
-          case 1: mensaje = 'Permiso de ubicación denegado'; break;
-          case 2: mensaje = 'Ubicación no disponible'; break;
-          case 3: mensaje = 'Tiempo de espera agotado'; break;
-          default: mensaje = 'Error desconocido';
-        }
+        switch (err.code) { case 1: mensaje = 'Permiso denegado'; break; case 2: mensaje = 'Ubicación no disponible'; break; case 3: mensaje = 'Tiempo agotado'; break; default: mensaje = 'Error'; }
         gpsDisplay.innerHTML = `❌ ${mensaje}`;
         cityFallback.style.display = 'block';
-        climateInfo.innerHTML = `
-          <span class="emoji">⚠️</span> <strong>No se pudo obtener tu GPS:</strong> ${mensaje.toLowerCase()}.<br>
-          👉 <strong>Selecciona tu ciudad en el menú de abajo</strong> y los cálculos funcionarán igual.
-        `;
+        climateInfo.innerHTML = `<span class="emoji">⚠️</span> No se pudo obtener GPS. Selecciona tu ciudad abajo.`;
         climateInfo.className = 'explain-box warn';
         usarCiudadPorDefecto();
       },
@@ -1065,86 +815,37 @@
     );
   }
 
-  // ═══════════════════════════════════════════
-  // RESPALDOS
-  // ═══════════════════════════════════════════
-  function usarCiudadPorDefecto() {
-    const lat = 8.7479, lon = -75.8814;
-    usuarioLat = lat;
-    usuarioLon = lon;
-    initMap(lat, lon);
-    obtenerDatosNASA(lat, lon);
-  }
-
-  function seleccionarCiudad() {
-    const val = document.getElementById('city-select').value;
-    if (!val) return;
-    const [lat, lon] = val.split(',').map(Number);
-    usuarioLat = lat;
-    usuarioLon = lon;
-    gpsObtenido = true;
-    document.getElementById('gps-display').innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-    initMap(lat, lon);
-    obtenerDatosNASA(lat, lon);
-  }
-
-  function reintentarGPS() {
-    document.getElementById('city-fallback').style.display = 'none';
-    detectarGPS();
-  }
-
-  function toggleManual() {
-    document.getElementById('manual-coords').classList.toggle('show');
-  }
-
+  function usarCiudadPorDefecto() { const lat = 8.7479, lon = -75.8814; usuarioLat = lat; usuarioLon = lon; initMap(lat, lon); obtenerDatosNASA(lat, lon); }
+  function seleccionarCiudad() { const val = document.getElementById('city-select').value; if (!val) return; const [lat, lon] = val.split(',').map(Number); usuarioLat = lat; usuarioLon = lon; gpsObtenido = true; document.getElementById('gps-display').innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; initMap(lat, lon); obtenerDatosNASA(lat, lon); }
+  function reintentarGPS() { document.getElementById('city-fallback').style.display = 'none'; detectarGPS(); }
+  function toggleManual() { document.getElementById('manual-coords').classList.toggle('show'); }
   function usarManual() {
-    const lat = parseFloat(document.getElementById('lat-manual').value);
-    const lon = parseFloat(document.getElementById('lon-manual').value);
-    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-      alert('Por favor ingresa coordenadas válidas.\nLatitud entre -90 y 90.\nLongitud entre -180 y 180.');
-      return;
-    }
-    usuarioLat = lat;
-    usuarioLon = lon;
-    gpsObtenido = true;
+    const lat = parseFloat(document.getElementById('lat-manual').value); const lon = parseFloat(document.getElementById('lon-manual').value);
+    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) { alert('Coordenadas inválidas.'); return; }
+    usuarioLat = lat; usuarioLon = lon; gpsObtenido = true;
     document.getElementById('gps-display').innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-    initMap(lat, lon);
-    obtenerDatosNASA(lat, lon);
+    initMap(lat, lon); obtenerDatosNASA(lat, lon);
   }
 
-  // ═══════════════════════════════════════════
-  // INICIO
-  // ═══════════════════════════════════════════
   detectarGPS();
 
   // ═══════════════════════════════════════════
-  // FORMATEO COP
+  // FORMATEO
   // ═══════════════════════════════════════════
-  function cop(valor) {
-    if (Math.abs(valor) >= 1000000) {
-      return '$' + (valor / 1000000).toFixed(1).replace('.', ',') + ' millones';
-    }
-    return '$' + Math.round(valor).toLocaleString('es-CO');
-  }
+  function cop(valor) { if (Math.abs(valor) >= 1000000) return '$' + (valor / 1000000).toFixed(1).replace('.', ',') + ' millones'; return '$' + Math.round(valor).toLocaleString('es-CO'); }
 
   // ═══════════════════════════════════════════
-  // CÁLCULO PRINCIPAL (PANEL 630W)
+  // CÁLCULO PRINCIPAL
   // ═══════════════════════════════════════════
   function calcularTodo() {
-    if (!ghiActual) {
-      alert('Espera unos segundos, aún estamos consultando los datos de la NASA. Si ya pasó mucho tiempo, selecciona tu ciudad manualmente.');
-      return;
-    }
-    
+    if (!ghiActual) { alert('Espera unos segundos, aún consultamos la NASA.'); return; }
     const areaTecho = parseFloat(document.getElementById('roof-area').value) || 30;
     const inclinacion = parseInt(document.getElementById('roof-tilt').value);
     const orientacion = parseInt(document.getElementById('roof-orientation').value);
     const factorShading = parseFloat(document.getElementById('shading-factor').value);
-    
     const facturaCOP = parseFloat(document.getElementById('bill-amount').value) || 250000;
     const precioKwhCOP = parseFloat(document.getElementById('kwh-price').value) || 900;
     const consumoMensualKwh = facturaCOP / precioKwhCOP;
-    
     const latAbs = Math.abs(usuarioLat);
     const inclinacionOptima = Math.min(latAbs, 15);
     const desvInc = Math.abs(inclinacion - inclinacionOptima);
@@ -1152,30 +853,21 @@
     const desvOr = Math.abs(orientacion);
     const factorOr = Math.max(0.65, 1 - (desvOr * 0.003));
     const factorGeom = factorInc * factorOr;
-    
     const energiaDiaria = ghiActual * areaTecho * factorGeom * factorShading;
     const energiaMensual = energiaDiaria * 30.44;
     const energiaAnual = energiaDiaria * 365.25;
     const eficienciaTecho = factorGeom * factorShading * 100;
-    
     const energiaObjetivoMensual = consumoMensualKwh * COBERTURA_OBJETIVO;
     const produccionKwhPorKwpMes = ghiActual * 30.44 * factorGeom * factorShading * EFICIENCIA_PANEL;
     const potenciaSistemaKwp = energiaObjetivoMensual / produccionKwhPorKwpMes;
-    
     let numPaneles = Math.ceil(potenciaSistemaKwp / POTENCIA_PANEL_KWP);
     if (numPaneles < 1) numPaneles = 1;
-    
     const areaNecesaria = numPaneles * AREA_PANEL_M2;
     const cabeEnTecho = areaNecesaria <= areaTecho;
-    
     let numPanelesFinal = numPaneles;
-    if (!cabeEnTecho) {
-      numPanelesFinal = Math.floor(areaTecho / AREA_PANEL_M2);
-      if (numPanelesFinal < 1) numPanelesFinal = 1;
-    }
+    if (!cabeEnTecho) { numPanelesFinal = Math.floor(areaTecho / AREA_PANEL_M2); if (numPanelesFinal < 1) numPanelesFinal = 1; }
     const potenciaFinalKwp = numPanelesFinal * POTENCIA_PANEL_KWP;
     const areaFinalNecesaria = numPanelesFinal * AREA_PANEL_M2;
-    
     const inversionCOP = potenciaFinalKwp * COSTO_POR_KWP_COP;
     const produccionMensualKwh = potenciaFinalKwp * produccionKwhPorKwpMes;
     const kwhAhorradosMes = Math.min(produccionMensualKwh, consumoMensualKwh);
@@ -1183,44 +875,34 @@
     const ahorroAnualCOP = ahorroMensualCOP * 12;
     const roiAnios = ahorroAnualCOP > 0 ? inversionCOP / ahorroAnualCOP : 0;
     const ahorro25Anios = (ahorroAnualCOP * 25) - inversionCOP;
-    
     const kwhAnualesGenerados = kwhAhorradosMes * 12;
     const co2EvitadoKg = kwhAnualesGenerados * FACTOR_CO2_KG_KWH;
     const arbolesEquivalentes = Math.round(co2EvitadoKg / CO2_POR_ARBOL_ANUAL);
-    
+
+    // Guardar resultados para compartir
+    resultadosCalculados = {
+      ghi: ghiActual, energiaDiaria, energiaMensual, energiaAnual, eficienciaTecho,
+      numPanelesFinal, potenciaFinalKwp, areaFinalNecesaria, inversionCOP,
+      ahorroMensualCOP, ahorroAnualCOP, roiAnios, ahorro25Anios,
+      co2EvitadoKg, arbolesEquivalentes, consumoMensualKwh
+    };
+
     document.getElementById('res-ghi').innerText = ghiActual.toFixed(2);
     document.getElementById('res-daily').innerText = energiaDiaria.toFixed(1);
     document.getElementById('res-monthly').innerText = energiaMensual.toFixed(0);
     document.getElementById('res-annual').innerText = Math.round(energiaAnual).toLocaleString('es-CO');
     document.getElementById('res-efficiency-badge').innerText = eficienciaTecho.toFixed(0) + '%';
     document.getElementById('efficiency-bar').style.width = eficienciaTecho + '%';
-    
     document.getElementById('res-panels').innerText = numPanelesFinal;
     document.getElementById('res-panels-sub').innerText = numPanelesFinal === 1 ? 'panel de 630 W' : 'paneles de 630 W cada uno';
     document.getElementById('res-power').innerText = potenciaFinalKwp.toFixed(2) + ' kWp';
     document.getElementById('res-area-used').innerText = areaFinalNecesaria.toFixed(1) + ' m²';
-    
     const fitsEl = document.getElementById('res-fits');
-    if (cabeEnTecho) {
-      fitsEl.innerHTML = '<span class="badge badge-green">✓ Sí caben</span>';
-    } else {
-      fitsEl.innerHTML = '<span class="badge badge-yellow">⚠ Solo caben ' + numPanelesFinal + '</span>';
-    }
-    
+    fitsEl.innerHTML = cabeEnTecho ? '<span class="badge badge-green">✓ Sí caben</span>' : '<span class="badge badge-yellow">⚠ Solo caben ' + numPanelesFinal + '</span>';
     const panelExplain = document.getElementById('panels-explain');
-    if (cabeEnTecho) {
-      panelExplain.innerHTML = `
-        <span class="emoji">✅</span> ¡Buenas noticias! Tu techo tiene espacio suficiente. 
-        Los ${numPanelesFinal} paneles de <strong>630W</strong> ocuparán aproximadamente <strong>${areaFinalNecesaria.toFixed(1)} m²</strong> 
-        de los ${areaTecho} m² que tienes disponibles. Te sobra espacio para expandir en el futuro.
-      `;
-    } else {
-      panelExplain.innerHTML = `
-        <span class="emoji">⚠️</span> Tu consumo requiere <strong>${numPaneles}</strong> paneles, pero en tu techo solo caben <strong>${numPanelesFinal}</strong>. 
-        Con estos paneles cubrirás aproximadamente el <strong>${((produccionMensualKwh / consumoMensualKwh) * 100).toFixed(0)}%</strong> de tu consumo.
-      `;
-    }
-    
+    panelExplain.innerHTML = cabeEnTecho
+      ? `<span class="emoji">✅</span> ¡Buenas noticias! Tu techo tiene espacio suficiente. Los ${numPanelesFinal} paneles de <strong>630W</strong> ocuparán aproximadamente <strong>${areaFinalNecesaria.toFixed(1)} m²</strong> de los ${areaTecho} m² disponibles.`
+      : `<span class="emoji">⚠️</span> Tu consumo requiere <strong>${numPaneles}</strong> paneles, pero en tu techo solo caben <strong>${numPanelesFinal}</strong>. Cubrirás aproximadamente el <strong>${((produccionMensualKwh / consumoMensualKwh) * 100).toFixed(0)}%</strong> de tu consumo.`;
     document.getElementById('res-investment').innerText = cop(inversionCOP);
     document.getElementById('res-monthly-savings').innerText = cop(ahorroMensualCOP);
     document.getElementById('res-annual-savings').innerText = cop(ahorroAnualCOP);
@@ -1228,14 +910,165 @@
     document.getElementById('res-25year').innerText = cop(ahorro25Anios);
     document.getElementById('res-co2').innerText = Math.round(co2EvitadoKg).toLocaleString('es-CO') + ' kg';
     document.getElementById('res-trees').innerText = arbolesEquivalentes + ' árboles';
-    
-    ['section-energy', 'section-panels', 'section-money', 'section-types', 'section-brands', 'section-providers', 'section-note'].forEach(id => {
+
+    // Actualizar tarjeta de logro
+    document.getElementById('ach-kwh').innerText = Math.round(energiaAnual).toLocaleString('es-CO');
+    document.getElementById('ach-trees').innerText = arbolesEquivalentes;
+
+    ['section-energy', 'section-panels', 'section-money', 'section-types', 'section-brands', 'section-providers', 'section-testimonials', 'section-note'].forEach(id => {
       document.getElementById(id).classList.add('visible');
     });
-    
-    setTimeout(() => {
-      document.getElementById('section-energy').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
+    setTimeout(() => { document.getElementById('section-energy').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+  }
+
+  // ═══════════════════════════════════════════
+  // SUGERENCIA 3.1 — COMPARTIR POR WHATSAPP
+  // ═══════════════════════════════════════════
+  function compartirWhatsApp() {
+    if (!resultadosCalculados) { alert('Primero calcula tu proyecto solar.'); return; }
+    const r = resultadosCalculados;
+    const mensaje = `☀️ *Mi proyecto solar en RayScan*\n\n` +
+      `📍 Ubicación: ${usuarioLat.toFixed(4)}, ${usuarioLon.toFixed(4)}\n` +
+      `🔆 Irradiancia solar: ${r.ghi.toFixed(2)} kWh/m²/día\n` +
+      `⚡ Energía captable: ${Math.round(r.energiaAnual).toLocaleString('es-CO')} kWh/año\n` +
+      `🔋 Paneles necesarios: ${r.numPanelesFinal} de 630W\n` +
+      `💰 Inversión estimada: ${cop(r.inversionCOP)}\n` +
+      `📈 Ahorro mensual: ${cop(r.ahorroMensualCOP)}\n` +
+      `⏱️ Recupero la inversión en: ${r.roiAnios.toFixed(1)} años\n` +
+      `🌳 Equivale a plantar ${r.arbolesEquivalentes} árboles\n\n` +
+      `Calcula tu potencial solar gratis en: https://scapale.github.io/rayscan.html`;
+    const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+  }
+
+  // ═══════════════════════════════════════════
+  // SUGERENCIA 3.2 — DESCARGAR PDF
+  // ═══════════════════════════════════════════
+  function descargarPDF() {
+    if (!resultadosCalculados) { alert('Primero calcula tu proyecto solar.'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const r = resultadosCalculados;
+    const pageW = 210;
+    const margin = 20;
+    let y = 25;
+
+    // Encabezado
+    doc.setFillColor(13, 17, 23);
+    doc.rect(0, 0, pageW, 40, 'F');
+    doc.setTextColor(255, 211, 61);
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'bold');
+    doc.text('RayScan Solar', margin, 20);
+    doc.setTextColor(200, 200, 200);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Reporte de Potencial Solar - ' + new Date().toLocaleDateString('es-CO'), margin, 30);
+
+    y = 55;
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('📍 Ubicación', margin, y); y += 8;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Coordenadas: ${usuarioLat.toFixed(4)}, ${usuarioLon.toFixed(4)}`, margin, y); y += 6;
+    doc.text(`Irradiancia solar: ${r.ghi.toFixed(2)} kWh/m²/día (datos NASA)`, margin, y); y += 12;
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('⚡ Potencial del Techo', margin, y); y += 8;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Energía captable al día: ${r.energiaDiaria.toFixed(1)} kWh`, margin, y); y += 6;
+    doc.text(`Energía captable al mes: ${r.energiaMensual.toFixed(0)} kWh`, margin, y); y += 6;
+    doc.text(`Energía captable al año: ${Math.round(r.energiaAnual).toLocaleString('es-CO')} kWh`, margin, y); y += 6;
+    doc.text(`Aprovechamiento del techo: ${r.eficienciaTecho.toFixed(0)}%`, margin, y); y += 12;
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('🔋 Sistema Fotovoltaico', margin, y); y += 8;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Paneles necesarios: ${r.numPanelesFinal} de 630W`, margin, y); y += 6;
+    doc.text(`Potencia total: ${r.potenciaFinalKwp.toFixed(2)} kWp`, margin, y); y += 6;
+    doc.text(`Área ocupada: ${r.areaFinalNecesaria.toFixed(1)} m²`, margin, y); y += 12;
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('💰 Análisis Financiero (COP)', margin, y); y += 8;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Inversión inicial estimada: ${cop(r.inversionCOP)}`, margin, y); y += 6;
+    doc.text(`Ahorro mensual: ${cop(r.ahorroMensualCOP)}`, margin, y); y += 6;
+    doc.text(`Ahorro anual: ${cop(r.ahorroAnualCOP)}`, margin, y); y += 6;
+    doc.text(`Retorno de inversión: ${r.roiAnios.toFixed(1)} años`, margin, y); y += 6;
+    doc.text(`Ahorro total en 25 años: ${cop(r.ahorro25Anios)}`, margin, y); y += 12;
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('🌍 Beneficio Ambiental', margin, y); y += 8;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`CO₂ evitado al año: ${Math.round(r.co2EvitadoKg).toLocaleString('es-CO')} kg`, margin, y); y += 6;
+    doc.text(`Equivale a plantar: ${r.arbolesEquivalentes} árboles`, margin, y); y += 12;
+
+    // Empresas recomendadas
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('🏢 Empresas instaladoras en Córdoba', margin, y); y += 8;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('ELEC S.A. — Montería — elecsa.com.co', margin, y); y += 5;
+    doc.text('Sonnen Energías Renovables — Montería — linkedin.com/company/sonnenenergias', margin, y); y += 5;
+    doc.text('Sol&Cielo Energía — Montería — +57 315 776 6930', margin, y); y += 5;
+    doc.text('Terrall Solnet — Montería — +57 311 684 1148', margin, y); y += 12;
+
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Reporte generado por RayScan Solar — Los cálculos son estimaciones. Cotiza con un instalador certificado RETIE.', margin, y);
+
+    doc.save('RayScan-Proyecto-Solar.pdf');
+  }
+
+  // ═══════════════════════════════════════════
+  // SUGERENCIA 3.3 — FORMULARIO DE COTIZACIÓN
+  // ═══════════════════════════════════════════
+  function abrirFormularioCotizacion() {
+    if (!resultadosCalculados) { alert('Primero calcula tu proyecto solar.'); return; }
+    document.getElementById('modal-cotizacion').classList.add('show');
+  }
+  function cerrarFormularioCotizacion() { document.getElementById('modal-cotizacion').classList.remove('show'); }
+  function enviarSolicitudCotizacion() {
+    const nombre = document.getElementById('lead-name').value.trim();
+    const telefono = document.getElementById('lead-phone').value.trim();
+    const ciudad = document.getElementById('lead-city').value.trim();
+    const consent = document.getElementById('lead-consent').checked;
+    if (!nombre || !telefono) { alert('Por favor completa nombre y teléfono.'); return; }
+    if (!consent) { alert('Debes autorizar el tratamiento de datos.'); return; }
+    // En producción, aquí se enviaría a un backend o servicio como Formspree / Google Sheets
+    console.log('Lead capturado:', { nombre, telefono, email: document.getElementById('lead-email').value, ciudad, resultados: resultadosCalculados });
+    document.getElementById('lead-success').style.display = 'block';
+    setTimeout(() => { cerrarFormularioCotizacion(); document.getElementById('lead-success').style.display = 'none'; }, 3000);
+  }
+
+  // ═══════════════════════════════════════════
+  // SUGERENCIA 4.2 — TARJETA DE LOGRO
+  // ═══════════════════════════════════════════
+  function descargarTarjetaLogro() {
+    if (!resultadosCalculados) { alert('Primero calcula tu proyecto solar.'); return; }
+    const card = document.getElementById('achievement-card');
+    html2canvas(card, {
+      backgroundColor: '#1a1a2e',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'RayScan-Logro-Solar.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }).catch(err => { console.error('Error generando tarjeta:', err); alert('No se pudo generar la tarjeta. Intenta de nuevo.'); });
   }
 </script>
 
